@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex flex-col justify-between">
+
+  <!-- 🧭 NAVBAR generado por nav.js -->
+  <div id="navbar"></div>
+
+  <!-- Contenido principal -->
+  <div class="flex flex-col items-center justify-center flex-grow px-4 py-8 sm:px-6 lg:px-8">
+    <form id="form" class="bg-gray-800 bg-opacity-90 p-8 rounded-3xl shadow-2xl w-full max-w-md border-t-4 border-red-600">
+      <h1 class="text-3xl font-extrabold text-white text-center mb-6">Crea tu cuenta</h1>
+
+      <!-- Nombre -->
+      <div class="mb-4">
+        <input type="text" id="username" placeholder="Nombre de usuario"
+          class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition">
+        <p class="text-gray-400 text-xs mt-1">Debe incluir al menos 6 caracteres (máx. 10).</p>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <input type="email" id="email" placeholder="Correo electrónico"
+          class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition">
+        <p class="text-gray-400 text-xs mt-1">Formato: ejemplo@gmail.com</p>
+      </div>
+
+      <!-- País -->
+      <div class="mb-4">
+        <select id="countries" class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600">
+          <option value="" selected disabled>Selecciona tu país</option>
+          <option value="58">Venezuela (+58)</option>
+          <option value="34">España (+34)</option>
+          <option value="52">México (+52)</option>
+          <option value="1">Estados Unidos (+1)</option>
+        </select>
+        <p class="text-gray-400 text-xs mt-1">Selecciona tu país.</p>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="mb-4">
+        <div class="flex gap-2">
+          <input type="text" id="phonecode" readonly
+            class="w-20 p-3 rounded-lg bg-gray-600 text-white border border-gray-600 text-center focus:outline-none cursor-not-allowed"
+            placeholder="+--">
+          <input type="tel" id="phone" placeholder="Número de teléfono"
+            class="flex-grow p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition">
+        </div>
+        <p class="text-gray-400 text-xs mt-1">Debe incluir entre 6 y 16 dígitos.</p>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="mb-4">
+        <input type="password" id="password" placeholder="Contraseña"
+          class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition">
+        <p class="text-gray-400 text-xs mt-1">Debe incluir números y letras (mín. 6, máx. 10).</p>
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="mb-6">
+        <input type="password" id="confirm-password" placeholder="Confirmar contraseña"
+          class="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition">
+        <p class="text-gray-400 text-xs mt-1">Las contraseñas deben coincidir.</p>
+      </div>
+
+      <!-- Botón -->
+      <div class="text-center">
+        <button id="form-btn" type="submit"
+          class="w-full bg-red-600 hover:bg-red-700 transition text-white font-bold py-3 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled>
+          Registrarse
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-400 text-sm py-4 border-t border-gray-700"></footer>
+
+  <!-- Scripts -->
+  <script src="../components/nav.js"></script>
+  <script src="index.js"></script>
+  </body>
+</html>
+

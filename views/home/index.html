@@ -1,80 +1,77 @@
 <!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Control de Pagos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="output.css" />
-  </head>
-  <body class="min-h-screen flex flex-col bg-gray-100">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Document</title>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-100 scroll-smooth">
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-900 text-white flex justify-between items-center p-4 shadow-md sticky top-0 z-50">
-      <h1 class="text-xl font-bold">Control de Pagos</h1>
-      <nav>
-        <ul class="flex gap-4">
-          <li>
-            <a href="login.html" class="hover:text-yellow-400 font-semibold transition-colors">
-              Iniciar sesión
-            </a>
-          </li>
-          <li>
-            <a href="register.html" class="hover:text-yellow-400 font-semibold transition-colors">
-              Registrarse
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </header>
+  <!-- 🧭 NAVBAR -->
+  <nav id="navbar" class="top-0 right-0 left-0 bg-slate-900 h-16"></nav>
 
-    <!-- Main Content con fondo -->
-    <main class="flex-grow relative flex justify-center items-center px-4">
+  <!-- MENÚ MÓVIL -->
+  <div class="bg-slate-600/60 fixed top-16 left-0 right-0 bottom-0 justify-center items-center flex-col gap-4 hidden">
+    <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">login</a>
+    <a href="/signup/" class="hover:text-yellow-400 text-white hover:bg-slate-500 py-2 px-4 rounded-lg font-bold transition ease-in-out">Registro</a>
+  </div>
 
-      <!-- Fondo -->
-      <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('imagenes/taller.jpg');"></div>
-      
-      <!-- Overlay más oscuro para mejorar contraste -->
-      <div class="absolute inset-0 bg-black/60 -z-10"></div>
+  <!-- 🏠 MAIN -->
+  <main class="flex-grow relative flex justify-center items-center px-4 overflow-hidden">
+    <!-- Fondo -->
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 brightness-90 transition-transform duration-1000 hover:scale-110"
+      style="background-image: url('imagenes/taller.jpg');"
+    ></div>
 
-      <!-- Contenido -->
-      <div class="relative z-10 text-center flex flex-col gap-6 md:gap-10 lg:w-3/5 md:w-9/12 md:mx-auto items-center">
-        
-        <!-- Caja de texto con fondo translúcido -->
-        <div class="bg-black/40 p-8 rounded-2xl backdrop-blur-sm">
-          <h2 class="text-yellow-400 font-extrabold text-4xl md:text-5xl drop-shadow-lg mb-4">
-            Bienvenido al sistema de Control de Pagos
-          </h2>
+    <!-- Overlay oscuro -->
+    <div class="absolute inset-0 bg-black/60 -z-10"></div>
 
-          <p class="text-gray-100 max-w-md mx-auto text-lg leading-relaxed">
-            Administra fácilmente los trabajos y pagos de los empleados.  
-            Accede como administrador o mecánico para comenzar.
-          </p>
+    <!-- Contenido -->
+    <div class="relative z-10 text-center flex flex-col gap-6 md:gap-10 lg:w-3/5 md:w-9/12 md:mx-auto items-center animate-fade-in">
+      <div class="bg-black/40 p-8 rounded-2xl backdrop-blur-sm shadow-lg border border-white/10">
+        <h2 class="text-white font-extrabold text-4xl md:text-5xl drop-shadow-lg mb-4">
+          Bienvenido al sistema de Control de Pagos
+        </h2>
 
-          <div class="flex justify-center gap-4 mt-6 flex-wrap">
-            <a
-              href="login.html"
-              class="bg-gradient-to-r from-slate-600 to-slate-700 py-3 px-6 rounded-lg text-white font-semibold shadow-md hover:scale-105 hover:from-slate-700 hover:to-slate-800 transition-transform duration-300"
-            >
-              Iniciar sesión
-            </a>
+        <p class="text-gray-100 max-w-md mx-auto text-lg leading-relaxed">
+          Administra fácilmente los trabajos y pagos de los empleados.  
+          Accede como administrador o mecánico para comenzar.
+        </p>
 
-            <a
-              href="register.html"
-              class="bg-gradient-to-r from-indigo-700 to-indigo-800 py-3 px-6 rounded-lg text-white font-semibold shadow-md hover:scale-105 hover:from-indigo-800 hover:to-indigo-900 transition-transform duration-300"
-            >
-              Registrarse
-            </a>
-          </div>
+        <div class="flex justify-center gap-4 mt-6 flex-wrap">
+          <a
+            href="login.html"
+            class="bg-gradient-to-r from-slate-600 to-slate-700 py-3 px-6 rounded-lg text-white font-semibold shadow-md transition-all duration-300 hover:scale-105 hover:shadow-yellow-400/40 hover:text-yellow-400"
+          >
+            Iniciar sesión
+          </a>
+
+          <a
+            href="/signup/"
+            class="bg-gradient-to-r from-slate-600 to-slate-700 py-3 px-6 rounded-lg text-white font-semibold shadow-md transition-all duration-300 hover:scale-105 hover:shadow-yellow-400/40 hover:text-yellow-400"
+          >
+            Registrarse
+          </a>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-white text-center py-4 text-sm mt-auto shadow-inner">
-      © 2025 Control de Pagos | Zander Osuna
-    </footer>
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-white text-center py-4 text-sm mt-auto shadow-inner">
+    © 2025 Control de Pagos | <a href="https://github.com/Zander1612" target="_blank" class="text-white hover:underline font-semibold">Zander Osuna</a>
+  </footer>
 
-  </body>
+  <!-- SCRIPTS -->
+  <script src="../components/nav.js"></script>
+
+</body>
 </html>
+
+
+
+
+
 
