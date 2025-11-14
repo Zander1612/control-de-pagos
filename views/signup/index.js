@@ -1,97 +1,110 @@
-const userRegex = /^(?=.*[a-z])(?=.*[0-9]).{6,16}$/;
-const emailRegex = /^\S+@\S+\.\S{3,4}$/;
-const phonenumberRegex = /^[0-9]{6,16}$/;
-const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,16}$/;
+import { createNotification } from '../components/notification.js';
 
-const countries = document.querySelector("#countries");
-const usernameInput = document.querySelector("#username");
-const emailInput = document.querySelector("#email");
-const phoneCode = document.querySelector("#phonecode");
-const phoneInput = document.querySelector("#phone");
-const passwordInput = document.querySelector("#password");
-const confirmPasswordInput = document.querySelector("#confirm-password");
-const formBtn = document.querySelector("#form-btn");
-const form = document.querySelector("#form");
+//Validation Patterns (Regex)
+const EMAIL_VALIDATION = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const PASSWORD_VALIDATION = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,16}$/;
+const NAME_VALIDATION = /^[a-zA-ZÀ-ÿ\s]{5,40}$/;
 
-// Estados de validación
-let usernameValidation = false;
+//DOM Elements
+const form = document.querySelector('#form');
+const nameInput = document.querySelector('#name-input');
+const emailInput = document.querySelector('#email-input');
+const passwordInput = document.querySelector('#password-input');
+const matchInput = document.querySelector('#match-input');
+const formBtn = document.querySelector('#form-btn');
+const notification = document.querySelector('#notification');
+
+// Validation State
+let nameValidation = false;
 let emailValidation = false;
-let phoneValidation = false;
 let passwordValidation = false;
-let confirmPasswordValidation = false;
-let countriesValidation = false;
+let matchValidation = false;
 
-const validation = (e, validation, element) => {
-  const information = e.target.parentElement.children[1];
-  formBtn.disabled = !(
-    usernameValidation &&
-    emailValidation &&
-    phoneValidation &&
-    passwordValidation &&
-    confirmPasswordValidation &&
-    countriesValidation
-  );
+// Validation Function
+const validation = (input, regexValidation) => {
 
-  if (validation) {
-    element.classList.add("border-green-500");
-    element.classList.remove("border-red-500");
-    information.classList.remove("text-red-500");
-  } else {
-    element.classList.add("border-red-500");
-    element.classList.remove("border-green-500");
-    information.classList.add("text-red-500");
-  }
-};
+    formBtn.disabled = nameValidation && emailValidation && passwordValidation && matchValidation ? false : true;
 
-// ✅ Genera automáticamente el código del país
-countries.addEventListener("change", (e) => {
-  const selected = e.target.value;
-  phoneCode.value = `+${selected}`;
-  countriesValidation = selected !== "";
-  validation(e, countriesValidation, countries);
-});
+    if (input.value === '') {
+        input.classList.remove('outline-red-700', 'outline-2', 'outline');
+        input.classList.remove('outline-green-700', 'outline-2', 'outline');
+        input.classList.add('focus:outline-indigo-700');
+    } else if (regexValidation) {
+        input.classList.remove('focus:outline-indigo-700');
+        input.classList.add('outline-green-700', 'outline-2', 'outline');
+    } else if (!regexValidation) {
+        input.classList.remove('focus:outline-indigo-700');
+        input.classList.remove('outline-green-700', 'outline-2', 'outline');
+        input.classList.add('outline-red-700', 'outline-2', 'outline');
+    };
+}
 
-// Nombre de usuario
-usernameInput.addEventListener("input", (e) => {
-  usernameValidation = userRegex.test(e.target.value);
-  validation(e, usernameValidation, usernameInput);
-});
+// Name Input
+nameInput.addEventListener('input', e => {
+    nameValidation = NAME_VALIDATION.test(e.target.value);
+    validation(nameInput, nameValidation);  
+})
 
-// Email
-emailInput.addEventListener("input", (e) => {
-  emailValidation = emailRegex.test(e.target.value);
-  validation(e, emailValidation, emailInput);
-});
+// Email Input
+emailInput.addEventListener('input', e => {
+    emailValidation = EMAIL_VALIDATION.test(e.target.value);
+    validation(emailInput, emailValidation);  
+})
 
-// Teléfono
-phoneInput.addEventListener("input", (e) => {
-  phoneValidation = phonenumberRegex.test(e.target.value);
-  validation(e, phoneValidation, phoneInput);
-});
+// Password Input
+passwordInput.addEventListener('input', e => {
+    passwordValidation = PASSWORD_VALIDATION.test(e.target.value);
+    validation(passwordInput, passwordValidation);
+    matchValidation = (e.target.value === matchInput.value) && (matchInput.value !== '');
+    validation(matchInput, matchValidation);
+})
 
-// Contraseña
-passwordInput.addEventListener("input", (e) => {
-  passwordValidation = passwordRegex.test(e.target.value);
-  validation(e, passwordValidation, passwordInput);
-});
+// Confirm Password Input
+matchInput.addEventListener('input', e => {
+    matchValidation = (e.target.value === passwordInput.value) && (e.target.value !== '');
+    validation(matchInput, matchValidation);
+})
 
-// Confirmar contraseña
-confirmPasswordInput.addEventListener("input", (e) => {
-  confirmPasswordValidation = e.target.value === passwordInput.value;
-  validation(e, confirmPasswordValidation, confirmPasswordInput);
-});
+//Submit Form
+form.addEventListener('submit', async e => {
+    e.preventDefault();
 
-// Envío del formulario
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
+    try {
+        // Crear el nuevo usuario
+        const newUser = {
+            name: nameInput.value,
+            email: emailInput.value,
+            password: passwordInput.value
+        }
 
-  const user = {
-    username: usernameInput.value,
-    email: emailInput.value,
-    phone: `${phoneCode.value} ${phoneInput.value}`,
-    password: passwordInput.value,
-  };
+        // Limpiar el formulario
+        nameInput.value = '';
+        emailInput.value = '';
+        passwordInput.value = '';
+        matchInput.value = '';
 
-  console.log(user);
-  alert(`Datos enviados:\nUsuario: ${user.username}\nEmail: ${user.email}\nTeléfono: ${user.phone}`);
+        // Resetear las validaciones
+        validation(nameInput, false);
+        validation(emailInput, false);
+        validation(passwordInput, false);
+        validation(matchInput, false);
+        
+        
+        // Enviar el usuario al servidor
+        const {data} = await axios.post('/api/users', newUser);
+        
+        // Mostrar notificación
+        createNotification(false, data);
+        setTimeout(() => {
+            notification.innerHTML = '';
+        }, 4000);
+
+    } catch (error) {
+        // Mostrar notificación de error
+        createNotification(true, error.response.data.error);
+        setTimeout(() => {
+            notification.innerHTML = '';
+        }, 4000);
+    }
+
 });

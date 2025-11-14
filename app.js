@@ -15,7 +15,9 @@ const path = require('path');
 //Rutas Frontend
 app.use('/', express.static(path.resolve('views', 'home')))
 app.use('/components', express.static(path.resolve('views', 'components')))
+app.use('/images', express.static(path.resolve('img')))
 app.use('/signup', express.static(path.resolve('views', 'signup')))
+app.use('/login', express.static(path.resolve('views', 'login')))
 
 
 

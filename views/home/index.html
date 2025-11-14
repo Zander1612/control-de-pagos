@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Document</title>
+  <title>Control de Pagos</title>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-100 scroll-smooth">
 
@@ -21,9 +21,10 @@
   <main class="flex-grow relative flex justify-center items-center px-4 overflow-hidden">
     <!-- Fondo -->
     <div
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 brightness-90 transition-transform duration-1000 hover:scale-110"
-      style="background-image: url('imagenes/taller.jpg');"
-    ></div>
+    
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 brightness-90 transition-transform duration-1000 hover:scale-110">
+    <img src="img/taller.jpg" alt="taller" class="w-full h-full object-cover">
+    </div>
 
     <!-- Overlay oscuro -->
     <div class="absolute inset-0 bg-black/60 -z-10"></div>
@@ -42,7 +43,7 @@
 
         <div class="flex justify-center gap-4 mt-6 flex-wrap">
           <a
-            href="login.html"
+            href="/login/"
             class="bg-gradient-to-r from-slate-600 to-slate-700 py-3 px-6 rounded-lg text-white font-semibold shadow-md transition-all duration-300 hover:scale-105 hover:shadow-yellow-400/40 hover:text-yellow-400"
           >
             Iniciar sesión

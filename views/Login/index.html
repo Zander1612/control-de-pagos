@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Registro</title>
+  <title>login</title>
 </head>
 
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex flex-col justify-between">
@@ -16,30 +16,12 @@
 
     
     <div class="hidden lg:flex w-2/4 justify-center items-center">
-      <img class="w-3/4" src="/images/registro.svg" alt="Registro" />
+      <img class="w-3/4" src="/images/login.svg" alt="Registro" />
     </div>
 
     <form class="flex flex-col gap-4 bg-gray-800 bg-opacity-90 p-8 rounded-3xl shadow-2xl w-full lg:w-2/4 border-t-4 border-red-600 text-white">
 
-      <h1 class="text-3xl font-extrabold text-center mb-4">Crea tu cuenta</h1>
-
-      
-      <div class="flex flex-col gap-2">
-        <label for="name-input" class="font-bold">
-          Nombre <span class="text-red-500">*</span>
-        </label>
-        <input 
-          type="text"
-          id="name-input"
-          name="name-input"
-          autocomplete="off"
-          placeholder="Nombre de usuario"
-          class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
-        >
-        <p class="text-xs text-gray-400">
-          Seria tu nombre y apellido. Tanto el nombre como el apellido deben comenzar con mayúsculas.
-        </p>
-      </div>
+      <h1 class="text-3xl font-extrabold text-center mb-4">Iniciar sesión</h1>
 
       
       <div class="flex flex-col gap-2">
@@ -51,10 +33,10 @@
           id="email-input"
           name="email-input"
           autocomplete="off"
-          placeholder="ejemplo@gmail.com"
+          
           class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
         >
-        <p class="text-xs text-gray-400">El correo es requerido</p>
+        
       </div>
 
       
@@ -70,33 +52,19 @@
           placeholder="Contraseña"
           class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
         >
-        <p class="text-xs text-gray-400">
-          Debe tener al menos una letra y un número.
+        
         </p>
       </div>
 
       
-      <div class="flex flex-col gap-2">
-        <label for="match-input" class="font-bold">
-          Confirmar Contraseña <span class="text-red-500">*</span>
-        </label>
-        <input
-          type="password"
-          id="match-input"
-          name="match-input"
-          autocomplete="off"
-          placeholder="Confirmar contraseña"
-          class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
-        >
-        <p class="text-xs text-gray-400">Debe coincidir con la contraseña</p>
-      </div>
+     
 
       
       <button 
         id="form-btn"
         class="w-full bg-red-600 hover:bg-red-700 transition text-white font-bold py-3 rounded-lg shadow-md"
       >
-        Registrarse
+        Iniciar sesión
       </button>
 
     </form>
@@ -105,10 +73,5 @@
   <footer class="text-center text-gray-400 text-sm py-4 border-t border-gray-700"></footer>
 
   <script src="../components/nav.js"></script>
-  <script src="index.js"></script>
 </body>
 </html>
-
-
-
-
