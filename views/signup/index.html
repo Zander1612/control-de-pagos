@@ -4,22 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <title>Registro</title>
 </head>
 
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex flex-col justify-between">
 
   
-  <nav id="navbar" class="top-0 right-0 left-0 bg-slate-900 h-16"></nav>
+  <nav id="navbar" class="top-0 right-0 left-0 bg-slate-900 h-16">
+  </nav>
+
+<div id="notification" class="fixed top-20 left-0 right-0">
+
+</div>
+
+
+
+
 
   <div class="h-full flex justify-center items-center px-4 py-8">
 
     
     <div class="hidden lg:flex w-2/4 justify-center items-center">
-      <img class="w-3/4" src="/images/registro.svg" alt="Registro" />
+      <img class="w-3/4" src="/img/registro.svg" alt="Registro" />
     </div>
 
-    <form class="flex flex-col gap-4 bg-gray-800 bg-opacity-90 p-8 rounded-3xl shadow-2xl w-full lg:w-2/4 border-t-4 border-red-600 text-white">
+    <form id="form" class="flex flex-col gap-4 bg-gray-800 bg-opacity-90 p-8 rounded-3xl shadow-2xl w-full lg:w-2/4 border-t-4 border-red-600 text-white">
 
       <h1 class="text-3xl font-extrabold text-center mb-4">Crea tu cuenta</h1>
 
@@ -34,7 +44,7 @@
           name="name-input"
           autocomplete="off"
           placeholder="Nombre de usuario"
-          class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
+          class="rounded-lg p-3 bg-zinc-100 text-black border border-gray-600 focus:ring-2 focus:outline-gray-700 transition"
         >
         <p class="text-xs text-gray-400">
           Seria tu nombre y apellido. Tanto el nombre como el apellido deben comenzar con mayúsculas.
@@ -52,7 +62,7 @@
           name="email-input"
           autocomplete="off"
           placeholder="ejemplo@gmail.com"
-          class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
+          class="rounded-lg p-3  bg-zinc-100 text-black border border-gray-600 focus:ring-2 focus:outline-gray-700 transition"
         >
         <p class="text-xs text-gray-400">El correo es requerido</p>
       </div>
@@ -68,10 +78,12 @@
           name="password-input"
           autocomplete="off"
           placeholder="Contraseña"
-          class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
+          class="rounded-lg p-3  bg-zinc-100 text-black border border-gray-600 focus:ring-2 focus:outline-gray-700 transition"
         >
         <p class="text-xs text-gray-400">
-          Debe tener al menos una letra y un número.
+          Debe tener al menos una letra y un número. <br>
+          Debe tener al menos un número. <br>
+          Debe tener al menos 8 caracteres. 
         </p>
       </div>
 
@@ -86,7 +98,7 @@
           name="match-input"
           autocomplete="off"
           placeholder="Confirmar contraseña"
-          class="rounded-lg p-3 bg-gray-700 text-white border border-gray-600 focus:ring-2 focus:ring-red-600 transition"
+          class="rounded-lg p-3  bg-zinc-100 text-black border border-gray-600 focus:ring-2 focus:outline-gray-700 transition"
         >
         <p class="text-xs text-gray-400">Debe coincidir con la contraseña</p>
       </div>
@@ -94,7 +106,8 @@
       
       <button 
         id="form-btn"
-        class="w-full bg-red-600 hover:bg-red-700 transition text-white font-bold py-3 rounded-lg shadow-md"
+        disabled
+        class="w-full bg-red-600 hover:bg-red-700 transition text-white font-bold py-3 rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Registrarse
       </button>
@@ -105,7 +118,8 @@
   <footer class="text-center text-gray-400 text-sm py-4 border-t border-gray-700"></footer>
 
   <script src="../components/nav.js"></script>
-  <script src="index.js"></script>
+  <script type="module" src="index.js"></script>
+  <script type="module" src="../components/notification.js"></script>
 </body>
 </html>
 

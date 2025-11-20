@@ -24,7 +24,7 @@ const createNavHome = () => {
 
 <!-- version escritorio -->
  <div class="hidden md:flex flex-row gap-4">
-   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">login</a>
+   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">Login</a>
    <a href="/signup/" class=" hover:text-yellow-400  text-white hover:bg-slate-500 py-2 px-4 rounded-lg font-bold transition ease-in-out">Registro</a>
 
  </div>
@@ -33,7 +33,7 @@ const createNavHome = () => {
 
  <div class="bg-slate-600/60 fixed top-16 left-0 right-0 bottom-0  justify-center items-center flex-col gap-4 hidden">
     
-   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">login</a>
+   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">Login</a>
    <a href="/signup/" class=" hover:text-yellow-400  text-white hover:bg-slate-500 py-2 px-4 rounded-lg font-bold transition ease-in-out">Registro</a>
   </div>
 
@@ -61,7 +61,7 @@ const createNavSignup = () => {
 
 <!-- version escritorio -->
  <div class="hidden md:flex flex-row gap-4">
-   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">login</a>
+   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">Login</a>
    
 
  </div>
@@ -70,7 +70,7 @@ const createNavSignup = () => {
 
  <div class="bg-slate-600/60 fixed top-16 left-0 right-0 bottom-0  justify-center items-center flex-col gap-4 hidden">
     
-   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">login</a>
+   <a href="/login/" class="hover:text-yellow-400 text-white hover:bg-slate-900 py-2 px-4 rounded-lg font-bold transition ease-out">Login</a>
    
   </div>
 
