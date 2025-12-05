@@ -4,7 +4,7 @@ const createNavHome = () => {
     navbar.innerHTML = 
     `
         <div class="max-width-7xl h-16 mx-auto flex items-center px-4 justify-between">
-            <p class="font-bold text-sm text-white">TodoApp</p>
+            <p class="font-bold text-xl text-white">Control de Pagos</p>
 
             <!-- version mobile -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 md:hidden text-white cursor-pointer p-2 rounded-lg">
@@ -28,7 +28,7 @@ const createNavSignup = () => {
     navbar.innerHTML = 
     `
         <div class="max-width-7xl h-16 mx-auto flex items-center px-4 justify-between">
-            <p class="font-bold text-sm text-white">TodoApp</p>
+            <p class="font-bold text-xl text-white">Control de Pagos</p>
 
             <!-- version mobile -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 md:hidden text-white cursor-pointer p-2 rounded-lg">
@@ -50,7 +50,7 @@ const createNavLogin = () => {
     navbar.innerHTML = 
     `
     <div class="max-width-7xl h-16 mx-auto flex items-center px-4 justify-between">
-        <p class="font-bold text-sm text-white">TodoApp</p>
+        <p class="font-bold text-xl text-white">Control de Pagos</p>
 
         <!-- version mobile -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 md:hidden text-white cursor-pointer p-2 rounded-lg">
@@ -71,7 +71,7 @@ const createNavLogin = () => {
 const createNavTodos = () => {
     navbar.innerHTML = `
         <div class="max-width-7xl h-16 mx-auto flex items-center px-4 justify-between">
-        <p class="font-bold text-sm text-white">TodoApp</p>
+        <p class="font-bold text-sm text-white">Control de Pagos</p>
 
         <!-- version mobile -->
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 md:hidden text-white cursor-pointer p-2 rounded-lg">
