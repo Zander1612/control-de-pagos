@@ -21,6 +21,8 @@ loginRouter.post('/', async (req, res) => {
     if (!isCorrect) {
         return res.status(400).json({ error: 'Email o contraseña inválidos' });
     }
+    console.log(userExist);
+    
 
     const userForToken = {
         id: userExist.id,

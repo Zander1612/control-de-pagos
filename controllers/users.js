@@ -35,6 +35,8 @@ usersRouter.post('/', async (req, res) => {
     
     const token = jwt.sign({id: saveUser.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '3h'});
     
+    console.log(saveUser);
+    
 
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
