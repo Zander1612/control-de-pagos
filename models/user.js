@@ -1,28 +1,44 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    passwordHash: String,
+    name: { 
+        type: String, 
+        required: true 
+    },
+    email: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
+    passwordHash: { 
+        type: String, 
+        required: true 
+    },
     verified: { 
         type: Boolean, 
         default: false 
     },
-    todos: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref:'Todo'
-       
-        }],
-})
+    // Añadimos el rol para diferenciar entre Admin y Mecánico
+    role: {
+        type: String,
+        enum: ['admin', 'mecanico'],
+        default: 'mecanico'
+    },
+    // Referencia a los servicios realizados por este mecánico
+    servicios: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service'
+    }]
+});
 
 userSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
         delete returnedObject.__v;
-        delete returnedObject.passwordHash;
+        delete returnedObject.passwordHash; // Por seguridad nunca enviamos el hash al frontend
     }
-})
+});
 
 const User = mongoose.model('User', userSchema);
 

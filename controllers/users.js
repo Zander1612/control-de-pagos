@@ -1,125 +1,70 @@
-const usersRouter = require('express').Router();
+require('dotenv').config(); 
+const usersRouter = require('express').Router(); 
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const { PAGE_URL } = require('../config');
+const axios = require('axios');  
+const { userExtractor, isAdmin } = require('../middleware/auth');
 
-// Post User
-usersRouter.post('/', async (req, res) => {
-    const { name, email, password } = req.body;
+// API Key de EmailListVerify 
+const EMAIL_LIST_VERIFY_KEY = process.env.EMAIL_LIST_VERIFY_KEY;
 
-    // Validar que los campos no estén vacíos
+// ============================================================
+// 🔥 RUTA PARA OBTENER EL PERFIL DEL USUARIO AUTENTICADO
+// ============================================================
+usersRouter.get('/perfil', userExtractor, (req, res) => {
+    try {
+        // Adaptado a los campos que definimos para tu taller
+        return res.json({
+            nombre: req.user.name,
+            email: req.user.email,
+            role: req.user.role // Importante para saber si es Admin o Mecánico
+        });
+    } catch (error) {
+        return res.status(500).json({ error: "Error al obtener el perfil" });
+    }
+});
+
+// ============================================================
+// POST: Crear un nuevo usuario (Registro Directo)
+// ============================================================
+usersRouter.post('/', async (request, response) => {
+    const { name, email, password } = request.body;
+
     if (!name || !email || !password) {
-        return res.status(400).json({ error: 'Todos lo espacion son requeridos' });
+        return response.status(400).json({ error: 'Todos los campos son requeridos' });
     }
 
-    // Validar que el correo no esté en uso
-    const userExist = await User.findOne({ email });
-    if (userExist) {
-        return res.status(400).json({ error: 'El correo ya está en uso' });
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        return response.status(400).json({ error: 'El correo ya está en uso' });
     }
 
-    // saltRounds = 10 by default
-    const passwordHash = await bcrypt.hash(password, 10);
+    /* --- COMENTAMOS ESTO TEMPORALMENTE ---
+    try {
+        const verifyResponse = await axios.get(`https://api.emaillistverify.com/v2/verifyEmail?secret=${process.env.EMAIL_LIST_VERIFY_KEY}&email=${email}`);
+        if (verifyResponse.data.toLowerCase() !== 'ok') {
+            return response.status(400).json({ error: 'El correo electrónico no es real' });
+        }
+    } catch (error) {
+        return response.status(400).json({ error: 'Error de conexion con el validador' });
+    }
+    --------------------------------------- */
 
-    // Crear el nuevo usuario
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
     const newUser = new User({
         name,
         email,
         passwordHash,
+        verified: true 
     });
 
-    // Guardar el usuario en la base de datos
-    const saveUser= await newUser.save();
-    
-    const token = jwt.sign({id: saveUser.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '3h'});
-    
-    console.log(saveUser);
-    
+    const savedUser = await newUser.save();
+    const token = jwt.sign({ id: savedUser.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
 
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        requireTLS: false,
-        auth: {
-            user: process.env.EMAIL_USER, // generated ethereal user
-            pass: process.env.EMAIL_PASS, // generated ethereal password
-        },
-        tls: {
-            rejectUnauthorized: false // WARNING: Disables certificate validation
-        },
-    });
-    
-
-    (async () => {
-        try {
-        const info = await transporter.sendMail({
-        from: process.env.EMAIL_USER, // sender address
-        to: saveUser.email, // list of receivers
-        subject: "Verificacion de Usuario", // Subject line
-        html: `<a href="${ PAGE_URL }/verify/${saveUser.id}/${token}"> Verificar Correo</a>`, // html body
-        });
-
-        console.log("Message sent: %s", info.messageId);
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    } catch (err) {
-        console.error("Error while sending mail", err);
-    }
-    })();
-
-    // Enviar respuesta exitosa
-    return res.status(201).json('Usuario creado correctamente, por favor verifica tu cuenta');
-
+    return response.status(201).json({ message: 'Usuario creado con éxito', token });
 });
 
-// Verify User
-usersRouter.patch('/:id/:token', async (req, res) => {
-    try {
-        const token = req.params.token;
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        const id = decodedToken.id;
-        await User.findByIdAndUpdate(id, { verified: true });
-        return res.sendStatus(200);
-        
-    } catch (error) {
-
-        // Encontrar el email del usuario
-        const id = req.params.id;
-        const { email } = await User.findById(id);
-
-        // Firmar un nuevo token
-        const token = jwt.sign({id: id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '3h'});
-    
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false, // true for 465, false for other ports
-            requireTLS: false,
-            auth: {
-            user: process.env.EMAIL_USER, // generated ethereal user
-            pass: process.env.EMAIL_PASS, // generated ethereal password
-        },
-            tls: {
-            rejectUnauthorized: false // WARNING: Disables certificate validation
-        },
-        });
-    
-        // Enviar el correo de verificación de nuevo
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER, // sender address
-            to: email,
-            subject: "Verificacion de Usuario", // Subject line
-            html: `<a href="${ PAGE_URL }/verify/${id}/${token}"> Verificar Correo</a>`, // html body
-
-        });
-
-        // Enviar respuesta de error
-        return res.status(400).json({ error: 'El enlace de verificación ha expirado. Se ha enviado un nuevo correo de verificación.'});
-    }
-});
-
-
-// Exportar el router
 module.exports = usersRouter;

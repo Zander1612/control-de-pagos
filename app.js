@@ -8,10 +8,12 @@ const cors = require('cors');
 const cookiesParser = require('cookie-parser');
 const morgan = require('morgan');
 const usersRouter = require('./controllers/users');
-const { userExtractor } = require('./middleware/auth.js');
+const { userExtractor, isAdmin } = require('./middleware/auth.js');
 const loginRouter = require('./controllers/login.js');
 const logoutRouter = require('./controllers/logout.js');
-const todosRouter = require('./controllers/todos.js');
+const servicesRouter = require('./controllers/services.js');
+const serviceTypesRouter = require('./controllers/servicesTypes.js');
+const SemanasRouter = require('./controllers/semana.js');
 
 (async() => {
     try {
@@ -44,7 +46,10 @@ app.use(morgan('tiny'));
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter);
-app.use('/api/todos',userExtractor, todosRouter);
+app.use('/api/services', servicesRouter);
+app.use('/api/service-types', serviceTypesRouter);
+app.use('/api/semanas', SemanasRouter);
+
 
 
 module.exports = app;
