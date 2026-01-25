@@ -74,7 +74,7 @@ form.addEventListener("submit", async (e) => {
     };
     const { data } = await axios.post("/api/users", newUser);
 
-    createNotification(false, data);
+    createNotification(false, data.message);
     setTimeout(() => {
       notification.innerHTML = "";
     }, 5000);

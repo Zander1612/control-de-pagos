@@ -8,7 +8,6 @@ const cors = require('cors');
 const cookiesParser = require('cookie-parser');
 const morgan = require('morgan');
 const usersRouter = require('./controllers/users');
-const { userExtractor, isAdmin } = require('./middleware/auth.js');
 const loginRouter = require('./controllers/login.js');
 const logoutRouter = require('./controllers/logout.js');
 const servicesRouter = require('./controllers/services.js');
@@ -39,6 +38,7 @@ app.use('/components', express.static(path.resolve('views', 'components')));
 app.use('/img', express.static(path.resolve('img')));
 app.use('/users', express.static(path.resolve('views', 'users')));
 app.use('/verify/:id/:token', express.static(path.resolve('views', 'verify')));
+app.use('/admin', express.static(path.resolve('views', 'admin')));
 
 app.use(morgan('tiny'));
 

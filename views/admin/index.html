@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Administrador - Taller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#12141d] text-gray-100">
+
+  <nav class="bg-[#1b1e29] shadow-xl px-6 py-4 flex justify-between items-center border-b border-white/5">
+    <div class="flex items-center gap-3">
+      <div class="bg-[#ffb400] p-2 rounded-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </div>
+      <span class="text-xl font-black uppercase tracking-tighter">Taller<span class="text-[#ffb400]">Manager</span></span>
+    </div>
+
+    <button id="logoutBtn" class="text-red-500 hover:text-red-400 font-bold uppercase text-xs tracking-widest transition">
+      Cerrar sesión
+    </button>
+  </nav>
+
+  <div class="p-6 max-w-7xl mx-auto">
+    
+    <div class="mb-10 pt-10 text-center">
+      <h2 class="text-4xl font-black uppercase mb-4">Panel de <span class="text-[#ffb400]">Administración</span></h2> 
+      <p class="text-gray-400 max-w-2xl mx-auto">Control semanal de servicios y liquidación de pagos para mecánicos.</p> 
+    </div>
+
+    <div class="bg-[#1b1e29] shadow-2xl rounded-sm p-6 mb-10 border-l-4 border-[#ffb400]">
+      <h2 class="text-sm font-bold uppercase tracking-widest text-[#ffb400] mb-3">Consultar Historial de Mecánico</h2>
+      <div class="flex gap-3">
+        <input id="buscar-mecanico" type="text" placeholder="Ingrese Cédula o Nombre del mecánico..." 
+               class="w-full bg-[#12141d] border border-white/10 p-3 rounded-sm text-sm focus:border-[#ffb400] outline-none transition" />
+        <button class="bg-[#ffb400] text-black px-6 py-2 font-black uppercase text-xs hover:bg-white transition">Buscar</button>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold uppercase">Semana Actual: <span class="text-gray-400">20 Jan - 25 Jan</span></h3>
+      <div class="flex gap-3">
+        <button id="btn-cerrar-semana" class="bg-red-600 text-white px-5 py-2 rounded-sm font-bold text-xs uppercase hover:bg-red-700 transition">
+          Cerrar Semana
+        </button>
+        <button id="btn-crear-servicio" onclick="abrirCrearServicio()" class="bg-[#ffb400] text-black px-5 py-2 rounded-sm font-bold text-xs uppercase hover:bg-white transition">
+          Registrar Servicio
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-[#1b1e29] shadow-xl rounded-sm p-6 mb-10 overflow-hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold uppercase tracking-tight text-[#ffb400]">Servicios Recientes - Todos los Mecánicos</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left">
+          <thead class="bg-[#12141d] text-[#ffb400] uppercase text-xs tracking-wider">
+            <tr>
+              <th class="px-4 py-4 border-b border-white/5">Mecánico</th>
+              <th class="px-4 py-4 border-b border-white/5">Vehículo</th>
+              <th class="px-4 py-4 border-b border-white/5">Servicio</th>
+              <th class="px-4 py-4 border-b border-white/5">Total Cliente</th>
+              <th class="px-4 py-4 border-b border-white/5">Pago Mecánico</th>
+              <th class="px-4 py-4 border-b border-white/5 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr class="hover:bg-white/5 transition">
+              <td class="px-4 py-4 font-bold uppercase">Juan Andrade</td>
+              <td class="px-4 py-4 text-gray-400">Toyota Corolla (ABC-123)</td>
+              <td class="px-4 py-4"><span class="bg-blue-500/10 text-blue-400 px-2 py-1 text-[10px] font-bold uppercase">Motor (40%)</span></td>
+              <td class="px-4 py-4 font-bold text-green-500">$200.00</td>
+              <td class="px-4 py-4 font-bold text-[#ffb400]">$80.00</td>
+              <td class="px-4 py-4 text-center">
+                <button class="text-gray-400 hover:text-white transition">Ver Detalle</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="modal-crear-servicio" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] items-center justify-center p-6">
+      <div class="bg-[#1b1e29] w-full max-w-lg border-t-8 border-[#ffb400] p-8 relative max-h-[90vh] overflow-y-auto">
+        
+        <button onclick="cerrarCrearServicio()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl">&times;</button>
+
+        <h2 class="text-3xl font-black uppercase mb-6">Registrar <span class="text-[#ffb400]">Servicio</span></h2>
+
+        <form id="form-registro-servicio" class="space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Mecánico Responsable</label>
+            <select class="w-full bg-[#12141d] border border-white/10 p-3 text-sm focus:border-[#ffb400] outline-none">
+              <option value="" disabled selected>Seleccione mecánico</option>
+              <option>Juan Andrade</option>
+              <option>David Da Silva</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Tipo de Servicio</label>
+              <select class="w-full bg-[#12141d] border border-white/10 p-3 text-sm focus:border-[#ffb400] outline-none">
+                <option>Frenos (50%)</option>
+                <option>Motor (40%)</option>
+                <option>Electrónica (60%)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Monto Cobrado ($)</label>
+              <input type="number" placeholder="0.00" class="w-full bg-[#12141d] border border-white/10 p-3 text-sm focus:border-[#ffb400] outline-none" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Vehículo (Marca/Modelo/Placa)</label>
+            <input type="text" placeholder="Ej: Ford Mustang - PLACA77" class="w-full bg-[#12141d] border border-white/10 p-3 text-sm focus:border-[#ffb400] outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-1">Descripción del Trabajo</label>
+            <textarea class="w-full bg-[#12141d] border border-white/10 p-3 text-sm min-h-[80px] focus:border-[#ffb400] outline-none" placeholder="Detalles de la reparación..."></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-[#ffb400] text-black py-4 font-black uppercase text-sm tracking-widest hover:bg-white transition">
+            Guardar Registro
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function abrirCrearServicio() { document.getElementById('modal-crear-servicio').classList.remove('hidden'); document.getElementById('modal-crear-servicio').classList.add('flex'); }
+    function cerrarCrearServicio() { document.getElementById('modal-crear-servicio').classList.add('hidden'); document.getElementById('modal-crear-servicio').classList.remove('flex'); }
+  </script>
+
+</body>
+</html>
