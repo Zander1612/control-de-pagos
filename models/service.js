@@ -1,20 +1,25 @@
 const mongoose = require('mongoose');
-
 const serviceSchema = new mongoose.Schema({
     description: { 
         type: String, 
-        required: true },
+        required: [true, 'La descripción es obligatoria'], // Agregamos mensaje de error
+        trim: true // Elimina espacios en blanco accidentales al inicio/final
+    },
     totalAmount: { 
         type: Number, 
-        required: true 
-    }, // Lo que pagó el cliente
+        required: true,
+        min: 0 // Evita que alguien guarde montos negativos por error
+    },
     mechanicAmount: { 
         type: Number, 
-        required: true 
-    }, // Lo que gana el mecánico (calculado)
-    date: { type: Date, default: Date.now },
+        required: true,
+        min: 0
+    },
+    date: { 
+        type: Date, 
+        default: Date.now 
+    },
     
-    // Relaciones
     mechanic: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -27,17 +32,7 @@ const serviceSchema = new mongoose.Schema({
     },
     semana: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Semana', // Para agrupar los pagos por semana
+        ref: 'Semana',
         required: true
     }
-});
-
-serviceSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id;
-        delete returnedObject.__v;
-    }
-});
-
-module.exports = mongoose.model('Service', serviceSchema);
+}, { timestamps: true }); 

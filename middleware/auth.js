@@ -2,40 +2,47 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const userExtractor = async (req, res, next) => {
-    // 1. Obtener el token del header Authorization (Bearer <token>)
     const authorization = req.get('authorization');
     let token = '';
 
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
         token = authorization.substring(7);
+    } else if (req.cookies && req.cookies.accessToken) {
+        token = req.cookies.accessToken;
     }
 
     if (!token) {
-        return res.status(401).json({ error: 'Token no proporcionado' });
+        if (req.path.startsWith('/api')) return res.status(401).json({ error: 'No token' });
+        return res.redirect('/login');
     }
 
     try {
-        // 2. Decodificar el token
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-        if (!decodedToken.id) {
-            return res.status(401).json({ error: 'Token inválido' });
+        
+        // Buscamos al usuario
+        const user = await User.findById(decodedToken.id);
+        
+        // Si el token es válido pero el usuario ya no existe en la BD
+        if (!user) {
+            return res.status(401).json({ error: 'Usuario no encontrado' });
         }
 
-        // 3. Buscar al usuario en la DB y agregarlo al objeto request (req)
-        const user = await User.findById(decodedToken.id);
-        req.user = user;
-
-        next(); // Continuar a la siguiente función
+        req.user = user; // Guardamos el usuario completo en la request
+        next();
     } catch (error) {
-        return res.status(401).json({ error: 'Token inválido o expirado' });
+        console.error("Error validando token:", error.message);
+        if (req.path.startsWith('/api')) return res.status(401).json({ error: 'Token inválido o expirado' });
+        return res.redirect('/login');
     }
 };
 
 const isAdmin = (req, res, next) => {
-    // Este middleware debe ir DESPUÉS de userExtractor
+    // Gracias a la validación anterior, aquí ya estamos seguros de que req.user existe
     if (!req.user || req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Acceso denegado: Se requieren permisos de administrador' });
+        if (req.path.startsWith('/api')) {
+            return res.status(403).json({ error: 'Acceso denegado: se requiere rol de administrador' });
+        }
+        return res.redirect('/'); 
     }
     next();
 };
