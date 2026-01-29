@@ -1,179 +1,93 @@
-//Selección de elementos del DOM
-const input = document.querySelector("input");
+// Selección de elementos del DOM
 const ul = document.querySelector("ul");
-const addBtn = document.querySelector(".add-btn");
-const invalidCheck = document.querySelector(".invalid-check");
-const form = document.querySelector("#form");
-const totalCountSpan = document.querySelector(".total-count");
-const completedCountSpan = document.querySelector(".completed-count");
-const incompletedCountSpan = document.querySelector(".incompleted-count");
+const totalCountSpan = document.querySelector(".total-count"); // Cantidad de trabajos
+const totalMoneySpan = document.querySelector(".total-money"); // Dinero ganado
+const userNameSpan = document.querySelector("#user-name");
+const logoutBtn = document.querySelector("#logout-btn");
 
-//Funciones de conteo de tareas
-const totalCount = () => {
-  const howMany = document.querySelector("ul").children.length;
-  totalCountSpan.innerHTML = howMany;
-};
-
-const completeCount = () => {
-  const howMany = document.querySelectorAll(".line-through").length;
-  completedCountSpan.innerHTML = howMany;
-};
-
-const incompletedCount = () => {
-  const howMany = document.querySelectorAll("ul li:not(.line-through)").length;
-  incompletedCountSpan.textContent = howMany;
-};
-
-const todoCount = () => {
-  totalCount();
-  completeCount();
-  incompletedCount();
-};
-
-//Agregar una nueva tarea (evento submit del form)
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-
-  // Validación del input
-  if (input.value === "") {
-    input.classList.remove("focus:ring-2", "focus:ring-violet-600");
-    input.classList.add("focus:ring-2", "focus:ring-rose-600");
-    invalidCheck.classList.remove("hidden");
-    return;
-  }
-
-  // Reset visual del input
-  input.classList.remove(
-    "focus:ring-2",
-    "focus:ring-rose-600",
-    "border-2",
-    "border-rose-600"
+// Función para renderizar un servicio en la lista
+const createServiceItem = (service) => {
+  const li = document.createElement("li");
+  
+  // Usamos clases de Tailwind para que se vea como una tarjeta bonita
+  li.classList.add(
+    "bg-slate-50 flex", 
+    "justify-between", 
+    "items-center", 
+    "p-4", 
+    "rounded-md", 
+    "border-l-4", 
+    "border-indigo-500", 
+    "shadow-sm"
   );
-  input.classList.add("focus:ring-2", "focus:ring-violet-600");
-  invalidCheck.classList.add("hidden");
 
-  // Crear tarea en el backend
-  const { data } = await axios.post("/api/todos", { text: input.value });
-  console.log(data);
+  // Formateamos la fecha
+  const date = new Date(service.date).toLocaleDateString();
 
-  //Crear el elemento <li> en el DOM
-  const listItem = document.createElement("li");
-  listItem.id = data.id;
-  listItem.classList.add("flex", "flex-row");
-  listItem.innerHTML = `
-		<div class="group grow flex flex-row justify-between">
-			<button class="delete-icon w-12 md:w-14 hidden group-hover:flex group-hover:justify-center group-hover:items-center cursor-pointer bg-red-500 origin-left">
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-				</svg>
-			</button>
-			<p class="p-4 break-words grow">${data.text}</p>
-		</div>
-		<button class="check-icon w-12 md:w-14 flex justify-center items-center cursor-pointer border-l border-slate-300 dark:border-slate-400 hover:bg-green-300 transition duration-300 easy-in-out">
-			<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-			</svg>
-		</button>
-	`;
+  li.innerHTML = `
+    <div class="flex flex-col">
+      <span class="font-bold text-slate-700">${service.description}</span>
+      <span class="text-xs text-slate-400">${date} - ${service.serviceType ? service.serviceType.name : 'Servicio'}</span>
+    </div>
+    <div class="font-bold text-green-600 text-lg">
+      +$${service.mechanicAmount}
+    </div>
+  `;
+  
+  return li;
+};
 
-  // Agregar al DOM y limpiar input
-  ul.append(listItem);
-
-  input.value = "";
-
-  todoCount();
-});
-
-//Manejo de clicks en las tareas (ul.addEventListener)
-ul.addEventListener("click", async (e) => {
-  // Eliminar tarea
-  if (e.target.closest(".delete-icon")) {
-    const li = e.target.closest(".delete-icon").parentElement.parentElement;
-    await axios.delete(`/api/todos/${li.id}`);
-    li.remove();
-    todoCount();
-  }
-
-  // Marcar tarea como completada o incompleta
-  if (e.target.closest(".check-icon")) {
-    const checkIcon = e.target.closest(".check-icon");
-    const listItem = checkIcon.parentElement;
-    if (!listItem.classList.contains("line-through")) {
-      await axios.patch(`/api/todos/${listItem.id}`, { checked: true });
-      checkIcon.classList.add("bg-green-400");
-      checkIcon.classList.remove("hover:bg-green-300");
-      listItem.classList.add(
-        "line-through",
-        "text-slate-400",
-        "dark:text-slate-600"
-      );
-    } else {
-      await axios.patch(`/api/todos/${listItem.id}`, { checked: false });
-      checkIcon.classList.remove("bg-green-400");
-      checkIcon.classList.add("hover:bg-green-300");
-      listItem.classList.remove(
-        "line-through",
-        "text-slate-400",
-        "dark:text-slate-600"
-      );
-    }
-
-    // Save in local storage
-    todoCount();
-    // localStorage.setItem('todoList', ul.innerHTML);
-  }
-});
-
-//Cargar tareas al iniciar la página
+// Cargar servicios al iniciar la página
 (async () => {
   try {
-    const { data } = await axios.get("/api/todos", {
-      withCredentials: true,
-    });
+    // 1. Mostrar nombre del usuario guardado en el Login
+    const localName = localStorage.getItem('userName');
+    if (localName) userNameSpan.textContent = localName;
 
-    //Agregar tareas al DOM desde el backend
-    data.forEach((todo) => {
-      const listItem = document.createElement("li");
-      listItem.id = todo.id;
-      listItem.classList.add("flex", "flex-row");
-      listItem.innerHTML = `
-				<div class="group grow flex flex-row justify-between">
-					<button class="delete-icon w-12 md:w-14 hidden group-hover:flex group-hover:justify-center group-hover:items-center cursor-pointer bg-red-500 origin-left">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-						</svg>
-					</button>
-					<p class="p-4 break-words grow">${todo.text}</p>
-				</div>
-				<button class="check-icon w-12 md:w-14 flex justify-center items-center cursor-pointer border-l border-slate-300 dark:border-slate-400 hover:bg-green-300 transition duration-300 easy-in-out">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-					</svg>
-				</button>
-			`;
-      if (todo.checked) {
-        listItem.children[1].classList.add("bg-green-400");
-        listItem.children[1].classList.remove("hover:bg-green-300");
-        listItem.classList.add(
-          "line-through",
-          "text-slate-400",
-          "dark:text-slate-600"
-        );
-      } else {
-        listItem.children[1].classList.remove("bg-green-400");
-        listItem.children[1].classList.add("hover:bg-green-300");
-        listItem.classList.remove(
-          "line-through",
-          "text-slate-400",
-          "dark:text-slate-600"
-        );
-      }
-      ul.append(listItem);
-    });
-    todoCount();
-    //Manejo de error (usuario no logueado)
+    // 2. Obtener los servicios desde tu API
+    // (Axios enviará la cookie automáticamente gracias al navegador)
+    const { data } = await axios.get("/api/services");
+
+    // 3. Calcular totales
+    let totalServices = data.length;
+    let totalMoney = 0;
+
+    // 4. Renderizar la lista
+    if (data.length === 0) {
+        ul.innerHTML = `<p class="text-center text-slate-400 py-4">No tienes trabajos registrados aún.</p>`;
+    } else {
+        data.forEach((service) => {
+            // Sumamos la ganancia del mecánico
+            totalMoney += service.mechanicAmount;
+            
+            // Creamos el elemento y lo agregamos
+            const listItem = createServiceItem(service);
+            ul.append(listItem);
+        });
+    }
+
+    // 5. Actualizar los contadores en pantalla
+    totalCountSpan.innerHTML = totalServices;
+    totalMoneySpan.innerHTML = `$${totalMoney}`;
+
   } catch (error) {
-    window.location.pathname = "/login";
-    console.log(error);
+    console.error("Error cargando servicios:", error);
+    // Si hay error de autenticación (401), mandarlo al login
+    if (error.response && error.response.status === 401) {
+        window.location.href = '/login/';
+    }
   }
 })();
+
+// Lógica de Logout
+logoutBtn.addEventListener('click', async () => {
+    try {
+        await axios.get('/api/logout');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userRole');
+        window.location.href = '/login/';
+    } catch (error) {
+        console.error(error);
+        window.location.href = '/login/';
+    }
+});

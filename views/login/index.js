@@ -23,13 +23,11 @@ form.addEventListener('submit', async e => {
         localStorage.setItem('userName', data.name);
         localStorage.setItem('token', data.token);
 
+    
         if (data.role === 'admin') {
-            window.location.pathname = '/admin/'; 
-        } else if (data.role === 'mecanico') {
-            window.location.pathname = '/'; 
+            window.location.href = '/admin/'; 
         } else {
-            
-            window.location.pathname = '/';
+            window.location.href = '/users/'; 
         }
 
     } catch (error) {

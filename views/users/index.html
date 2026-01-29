@@ -1,66 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Control de Pagos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Trabajos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
+<body class="bg-slate-100 h-screen flex flex-col items-center pt-10">
 
-<div class="min-h-screen bg-slate-50 p-6">
-  <div class="max-w-4xl mx-auto">
-    <header class="flex justify-between items-end mb-8">
-      <div>
-        <h1 class="text-3xl font-extrabold text-slate-800">Hola, Juan Pérez</h1>
-        <p class="text-slate-500">Aquí tienes el resumen de tus ganancias de esta semana.</p>
-      </div>
-      <div class="text-right">
-        <span class="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">SEMANA ACTIVA</span>
-      </div>
-    </header>
+    <div class="w-full max-w-lg bg-white p-6 rounded-lg shadow-xl">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-slate-700">Hola, <span id="user-name">Mecánico</span> 👋</h1>
+            <button id="logout-btn" class="text-sm text-red-500 hover:underline">Cerrar Sesión</button>
+        </div>
 
-    <div class="bg-indigo-900 text-white p-8 rounded-3xl shadow-xl mb-8 flex justify-between items-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
-      <div>
-        <p class="text-indigo-200 text-sm font-medium uppercase tracking-wider">Total Acumulado</p>
-        <p class="text-5xl font-black mt-1">$845.50</p>
-      </div>
-      <div class="hidden sm:block">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-indigo-400 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
+        <div class="bg-indigo-600 text-white p-4 rounded-lg mb-6 shadow-md flex justify-between items-center">
+            <div>
+                <p class="text-indigo-200 text-sm">Ganancia Semanal</p>
+                <p class="text-3xl font-bold total-money">$0</p>
+            </div>
+            <div class="text-right">
+                <p class="text-indigo-200 text-sm">Trabajos</p>
+                <p class="text-2xl font-bold total-count">0</p>
+            </div>
+        </div>
+
+        <h3 class="text-slate-500 mb-2 uppercase text-xs font-bold tracking-wider">Historial de esta semana</h3>
+        <ul class="space-y-3 max-h-96 overflow-y-auto pr-2">
+            </ul>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-      <h3 class="text-lg font-bold text-slate-800 mb-4">Trabajos Realizados</h3>
-      <div class="space-y-4">
-        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-          <div class="flex items-center gap-4">
-            <div class="bg-white p-2 rounded-lg shadow-sm font-bold text-indigo-600">22 Jan</div>
-            <div>
-              <p class="font-bold text-slate-700">Cambio de Amortiguadores</p>
-              <p class="text-xs text-slate-400">Tipo: Suspensión (40% comisión)</p>
-            </div>
-          </div>
-          <div class="text-right font-bold text-slate-800">
-            $60.00
-          </div>
-        </div>
-        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-          <div class="flex items-center gap-4">
-            <div class="bg-white p-2 rounded-lg shadow-sm font-bold text-indigo-600">21 Jan</div>
-            <div>
-              <p class="font-bold text-slate-700">Afinamiento Mayor</p>
-              <p class="text-xs text-slate-400">Tipo: Motor (50% comisión)</p>
-            </div>
-          </div>
-          <div class="text-right font-bold text-slate-800">
-            $125.00
-          </div>
-        </div>
-      </div>
-      
-      <button class="w-full mt-6 text-indigo-600 font-semibold text-sm hover:underline">Ver historial de semanas anteriores →</button>
-    </div>
-  </div>
-</div>
+    <script src="/users/index.js"></script>
+</body>
+</html>

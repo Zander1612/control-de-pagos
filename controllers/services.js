@@ -59,30 +59,23 @@ servicesRouter.post('/', userExtractor, isAdmin, async (req, res) => {
 // -----------------------------------------------------------
 // 2. REPORTE GENERAL PARA EL ADMIN
 // -----------------------------------------------------------
-servicesRouter.get('/admin-report', userExtractor, isAdmin, async (req, res) => {
+servicesRouter.get('/', userExtractor, async (req, res) => {
+    const user = req.user; // Obtenido gracias al middleware userExtractor
+
     try {
-        const currentSemana = await Semana.findOne({ status: 'open' });
-        if (!currentSemana) return res.status(404).json({ error: 'No hay semana activa' });
+        let services;
+        
+        if (user.role === 'admin') {
+            // El admin ve TODO
+            services = await Service.find({}).populate('mechanic', { name: 1 }).populate('serviceType');
+        } else {
+            // El mecánico solo ve lo SUYO
+            services = await Service.find({ mechanic: user._id }).populate('serviceType');
+        }
 
-        const services = await Service.find({ semana: currentSemana._id })
-            .populate('mechanic', 'name')
-            .populate('serviceType', 'name');
-
-        const totalWorkshop = services.reduce((sum, s) => sum + (s.workshopAmount || 0), 0);
-        const totalMechanics = services.reduce((sum, s) => sum + (s.mechanicAmount || 0), 0);
-
-        res.json({
-            semanaInfo: currentSemana,
-            resumenFinanciero: {
-                ingresoTotal: currentSemana.totalGenerated,
-                gananciaTaller: totalWorkshop,
-                totalNominaMecanicos: totalMechanics
-            },
-            serviciosRegistrados: services
-        });
+        res.json(services);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al generar reporte' });
+        res.status(500).json({ error: 'Error al obtener los servicios' });
     }
 });
 

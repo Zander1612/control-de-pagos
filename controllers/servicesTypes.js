@@ -2,13 +2,13 @@ const serviceTypesRouter = require('express').Router();
 const ServiceType = require('../models/serviceType');
 const { userExtractor, isAdmin } = require('../middleware/auth');
 
-// 1. Obtener todos los tipos de servicios (Cualquier usuario logueado)
+
 serviceTypesRouter.get('/', userExtractor, async (req, res) => {
     const types = await ServiceType.find({});
     res.json(types);
 });
 
-// 2. Crear un nuevo tipo de servicio (SOLO ADMIN)
+
 serviceTypesRouter.post('/', userExtractor, isAdmin, async (req, res) => {
     const { name, percentage } = req.body;
 

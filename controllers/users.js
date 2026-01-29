@@ -1,27 +1,32 @@
-require('dotenv').config(); 
-const usersRouter = require('express').Router(); 
+require('dotenv').config();
+const usersRouter = require('express').Router();
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');  
-const { userExtractor } = require('../middleware/auth');
+const { userExtractor, isAdmin } = require('../middleware/auth');
 
-
-usersRouter.get('/', userExtractor, (req, res) => {
+// --- 1. OBTENER TODOS LOS USUARIOS (Para el Admin) ---
+// Esta es la ruta que corregimos para que el selector de mecánicos funcione
+usersRouter.get('/', userExtractor, isAdmin, async (req, res) => {
     try {
-       
-        return res.json({
-            id: req.user._id,
-            nombre: req.user.name,
-            email: req.user.email,
-            role: req.user.role 
-        });
+        // Buscamos todos los usuarios en la BD
+        const users = await User.find({});
+        
+        // Enviamos la lista mapeada con los campos que el frontend necesita
+        return res.json(users.map(user => ({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        })));
     } catch (error) {
-        return res.status(500).json({ error: "Error al obtener el perfil" });
+        console.error("Error al obtener la lista de usuarios:", error);
+        return res.status(500).json({ error: "Error interno al obtener usuarios" });
     }
 });
 
-
+// --- 2. REGISTRO DE NUEVO USUARIO ---
 usersRouter.post('/', async (request, response) => {
     const { name, email, password } = request.body;
 
@@ -31,7 +36,6 @@ usersRouter.post('/', async (request, response) => {
     }
 
     try {
-        
         const normalizedEmail = email.toLowerCase().trim();
         const userExists = await User.findOne({ email: normalizedEmail });
         
@@ -39,7 +43,7 @@ usersRouter.post('/', async (request, response) => {
             return response.status(400).json({ error: 'El correo ya está en uso' });
         }
 
-       
+        // --- Validación Externa de Email ---
         try {
             const verifyResponse = await axios.get(`https://apps.emaillistverify.com/api/verifyEmail`, {
                 params: {
@@ -59,13 +63,15 @@ usersRouter.post('/', async (request, response) => {
                 });
             }
         } catch (apiError) {
+            // Si la API falla, permitimos el registro para no bloquear el flujo
             console.error('EmailListVerify API Error:', apiError.message);
         }
         
+        // Encriptación de contraseña
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // Crear el nuevo usuario
+        // Crear el nuevo usuario (Por defecto el modelo debería tener role: 'mecanico')
         const newUser = new User({
             name: name.trim(),
             email: normalizedEmail,
@@ -75,7 +81,7 @@ usersRouter.post('/', async (request, response) => {
 
         const savedUser = await newUser.save();
 
-        
+        // Generación de Token
         const userForToken = {
             id: savedUser._id,
             email: savedUser.email,
@@ -88,7 +94,6 @@ usersRouter.post('/', async (request, response) => {
             { expiresIn: '1d' }
         );
 
-      
         return response.status(201).json({ 
             message: 'Usuario creado con éxito', 
             token,
@@ -106,4 +111,3 @@ usersRouter.post('/', async (request, response) => {
 });
 
 module.exports = usersRouter;
-
