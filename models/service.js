@@ -1,25 +1,6 @@
 const mongoose = require('mongoose');
+
 const serviceSchema = new mongoose.Schema({
-    description: { 
-        type: String, 
-        required: [true, 'La descripción es obligatoria'], // Agregamos mensaje de error
-        trim: true // Elimina espacios en blanco accidentales al inicio/final
-    },
-    totalAmount: { 
-        type: Number, 
-        required: true,
-        min: 0 // Evita que alguien guarde montos negativos por error
-    },
-    mechanicAmount: { 
-        type: Number, 
-        required: true,
-        min: 0
-    },
-    date: { 
-        type: Date, 
-        default: Date.now 
-    },
-    
     mechanic: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -30,9 +11,33 @@ const serviceSchema = new mongoose.Schema({
         ref: 'ServiceType',
         required: true
     },
-    semana: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Semana',
+    costo_total: {
+        type: Number,
         required: true
+    },
+    monto_a_pagar: { // <--- ESTE ES EL CAMPO IMPORTANTE
+        type: Number,
+        default: 0
+    },
+    description: String,
+    status: {
+        type: String,
+        enum: ['pendiente', 'en proceso', 'finalizado'], // Validamos que solo sean estos
+        default: 'pendiente'
+    },
+    fecha_inicio: {
+        type: Date,
+        default: Date.now
     }
-}, { timestamps: true }); 
+});
+
+// Configuración para que el JSON devuelva 'id' en lugar de '_id'
+serviceSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString();
+        delete returnedObject._id;
+        delete returnedObject.__v;
+    }
+});
+
+module.exports = mongoose.model('Service', serviceSchema);

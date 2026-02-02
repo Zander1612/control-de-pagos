@@ -6,19 +6,15 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');  
 const { userExtractor, isAdmin } = require('../middleware/auth');
 
-// --- 1. OBTENER TODOS LOS USUARIOS (Para el Admin) ---
-// Esta es la ruta que corregimos para que el selector de mecánicos funcione
+// --- 1. OBTENER LISTA (Corregido para el JS) ---
 usersRouter.get('/', userExtractor, isAdmin, async (req, res) => {
     try {
-        // Buscamos todos los usuarios en la BD
         const users = await User.find({});
-        
-        // Enviamos la lista mapeada con los campos que el frontend necesita
         return res.json(users.map(user => ({
-            id: user._id,
+            id: user._id.toString(), // Aseguramos que el JS vea "id"
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role || 'mecanico' 
         })));
     } catch (error) {
         console.error("Error al obtener la lista de usuarios:", error);
@@ -26,11 +22,10 @@ usersRouter.get('/', userExtractor, isAdmin, async (req, res) => {
     }
 });
 
-// --- 2. REGISTRO DE NUEVO USUARIO ---
+// --- 2. REGISTRO (Tu lógica original intacta) ---
 usersRouter.post('/', async (request, response) => {
     const { name, email, password } = request.body;
 
-    // Validación de campos vacíos
     if (!name || !email || !password) {
         return response.status(400).json({ error: 'Todos los campos son requeridos' });
     }
@@ -57,31 +52,27 @@ usersRouter.post('/', async (request, response) => {
             const validStatuses = ['valid', 'ok', 'ok_for_all'];
 
             if (!validStatuses.includes(status)) {
-                console.log(`Registro rechazado por API. Email: ${normalizedEmail}, Status: ${status}`);
                 return response.status(400).json({ 
                     error: 'El correo electrónico no es válido o no existe' 
                 });
             }
         } catch (apiError) {
-            // Si la API falla, permitimos el registro para no bloquear el flujo
             console.error('EmailListVerify API Error:', apiError.message);
         }
         
-        // Encriptación de contraseña
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // Crear el nuevo usuario (Por defecto el modelo debería tener role: 'mecanico')
         const newUser = new User({
             name: name.trim(),
             email: normalizedEmail,
             passwordHash,
-            verified: true 
+            verified: true,
+            role: 'mecanico' // <--- Asegúrate que esto esté aquí
         });
 
         const savedUser = await newUser.save();
 
-        // Generación de Token
         const userForToken = {
             id: savedUser._id,
             email: savedUser.email,
@@ -106,7 +97,29 @@ usersRouter.post('/', async (request, response) => {
 
     } catch (error) {
         console.error('Error en el controlador de usuarios:', error);
-        return response.status(500).json({ error: 'Error interno del servidor al crear usuario' });
+        return response.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// ELIMINAR USUARIO 
+usersRouter.delete('/:id', userExtractor, isAdmin, async (req, res) => {
+    try {
+        const userToDelete = await User.findById(req.params.id);
+
+        if (!userToDelete) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        // Opcional: Evitar que el admin se borre a sí mismo
+        if (userToDelete._id.toString() === req.user.id) {
+            return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta de administrador' });
+        }
+
+        await User.findByIdAndDelete(req.params.id);
+        res.status(204).end(); // Éxito, sin contenido
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error);
+        res.status(500).json({ error: 'Error interno al eliminar el mecánico' });
     }
 });
 

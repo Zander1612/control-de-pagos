@@ -43,6 +43,7 @@ loginRouter.post('/', async (req, res) => {
 
         return res.status(200).json({
             token: accessToken,
+            id: userExist._id, 
             role: userExist.role,
             name: userExist.name,
             message: "Login exitoso"

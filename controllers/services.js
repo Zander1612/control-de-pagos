@@ -1,109 +1,150 @@
 const servicesRouter = require('express').Router();
 const Service = require('../models/service');
 const ServiceType = require('../models/serviceType');
-const Semana = require('../models/semana'); 
-const { userExtractor, isAdmin } = require('../middleware/auth');
+const User = require('../models/user');
+const { userExtractor } = require('../middleware/auth');
 
-// -----------------------------------------------------------
-// 1. REGISTRAR SERVICIO (Solo Admin)
-// -----------------------------------------------------------
-servicesRouter.post('/', userExtractor, isAdmin, async (req, res) => {
+// --- OBTENER TODOS LOS SERVICIOS ---
+servicesRouter.get('/', userExtractor, async (req, res) => {
     try {
-        const { serviceTypeId, description, totalAmount, mechanicId } = req.body;
+        const filter = req.user.role === 'admin' 
+            ? {} 
+            : { mechanic: req.user.id };
 
-        // Validaciones básicas
-        if (!mechanicId || !serviceTypeId || !totalAmount) {
-            return res.status(400).json({ error: 'Faltan campos obligatorios' });
-        }
+        const services = await Service.find(filter)
+            .populate('mechanic', { name: 1, email: 1 })
+            .populate('serviceType', { name: 1, percentage: 1 });
 
-        const serviceType = await ServiceType.findById(serviceTypeId);
-        if (!serviceType) return res.status(404).json({ error: 'Tipo de servicio no encontrado' });
+        res.json(services.map(service => ({
+            id: service._id,
+            mechanic: service.mechanic,
+            serviceType: service.serviceType,
+            costo_total: service.costo_total,
+            monto_a_pagar: service.monto_a_pagar,
+            status: service.status,
+            description: service.description,
+            fecha_inicio: service.fecha_inicio
+        })));
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener servicios' });
+    }
+});
 
-        const currentSemana = await Semana.findOne({ status: 'open' });
-        if (!currentSemana) return res.status(400).json({ error: 'No hay una semana abierta actualmente' });
+// --- CREAR NUEVO SERVICIO ---
+servicesRouter.post('/', userExtractor, async (req, res) => {
+    const { mechanic, serviceType, costo_total, description } = req.body;
 
-        // Cálculos matemáticos
-        const mechanicAmount = (totalAmount * serviceType.percentage) / 100;
-        const workshopAmount = totalAmount - mechanicAmount;
+    if (!mechanic || !serviceType || !costo_total) {
+        return res.status(400).json({ error: 'Faltan datos: mecánico, tipo de servicio o costo' });
+    }
+
+    try {
+        const typeFound = await ServiceType.findById(serviceType);
+        if (!typeFound) return res.status(404).json({ error: 'Tipo de servicio no existe' });
+
+        const mechanicFound = await User.findById(mechanic);
+        if (!mechanicFound) return res.status(404).json({ error: 'Mecánico no existe' });
+
+        const costo = Number(costo_total);
+        const porcentaje = Number(typeFound.percentage);
+        const a_pagar = (costo * porcentaje) / 100;
 
         const newService = new Service({
-            description,
-            totalAmount,
-            mechanicAmount,
-            workshopAmount, // Asegúrate de haber agregado este campo a models/service.js
-            serviceType: serviceTypeId,
-            mechanic: mechanicId,
-            semana: currentSemana._id,
-            date: new Date()
+            mechanic: mechanicFound._id,
+            serviceType: typeFound._id,
+            costo_total: costo,
+            monto_a_pagar: a_pagar,
+            description: description || '',
+            status: 'pendiente',
+            fecha_inicio: new Date()
         });
 
         const savedService = await newService.save();
-
-        // Actualizar el acumulado de la semana
-        currentSemana.totalGenerated += totalAmount;
-        await currentSemana.save();
-
-        // Devolvemos el servicio con los datos de nombres ya cargados
-        const populatedService = await savedService.populate([
-            { path: 'mechanic', select: 'name' },
-            { path: 'serviceType', select: 'name' }
-        ]);
+        const populatedService = await Service.findById(savedService._id)
+            .populate('mechanic', { name: 1 })
+            .populate('serviceType', { name: 1 });
 
         res.status(201).json(populatedService);
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al guardar el servicio' });
+        console.error("Error en POST /api/services:", error);
+        res.status(500).json({ error: 'Error interno al guardar el servicio' });
     }
 });
 
-// -----------------------------------------------------------
-// 2. REPORTE GENERAL PARA EL ADMIN
-// -----------------------------------------------------------
-servicesRouter.get('/', userExtractor, async (req, res) => {
-    const user = req.user; // Obtenido gracias al middleware userExtractor
-
+// --- ACTUALIZAR ESTADO ---
+servicesRouter.patch('/:id', userExtractor, async (req, res) => {
+    const { status } = req.body;
     try {
-        let services;
-        
-        if (user.role === 'admin') {
-            // El admin ve TODO
-            services = await Service.find({}).populate('mechanic', { name: 1 }).populate('serviceType');
-        } else {
-            // El mecánico solo ve lo SUYO
-            services = await Service.find({ mechanic: user._id }).populate('serviceType');
-        }
+        const updatedService = await Service.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        ).populate('mechanic').populate('serviceType');
 
-        res.json(services);
+        res.json(updatedService);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los servicios' });
+        res.status(400).json({ error: 'Error al actualizar estado' });
     }
 });
 
-// -----------------------------------------------------------
-// 3. ELIMINAR SERVICIO (Solo Admin)
-// -----------------------------------------------------------
-servicesRouter.delete('/:id', userExtractor, isAdmin, async (req, res) => {
+// --- ELIMINAR SERVICIO ---
+servicesRouter.delete('/:id', userExtractor, async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const serviceToDelete = await Service.findById(id);
-        if (!serviceToDelete) return res.status(404).json({ error: 'Servicio no encontrado' });
-
-        const semana = await Semana.findById(serviceToDelete.semana);
-        
-        // Solo permitimos borrar si la semana sigue abierta
-        if (semana && semana.status === 'open') {
-            semana.totalGenerated -= serviceToDelete.totalAmount;
-            await semana.save();
-        } else if (semana && semana.status === 'closed') {
-            return res.status(400).json({ error: 'No se puede eliminar registros de una semana cerrada' });
-        }
-
-        await Service.findByIdAndDelete(id);
+        await Service.findByIdAndDelete(req.params.id);
         res.status(204).end();
     } catch (error) {
+        res.status(400).json({ error: 'Error al eliminar servicio' });
+    }
+});
+
+// --- INICIAR SEMANA ---
+servicesRouter.post('/start-week', userExtractor, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'No autorizado' });
+
+    try {
+        // Guardar fecha de inicio en DB o simplemente devolver la fecha
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // lunes
+        startOfWeek.setHours(0,0,0,0);
+
+        res.json({ message: 'Semana iniciada', startOfWeek });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al iniciar semana' });
+    }
+});
+
+// --- CERRAR SEMANA ---
+servicesRouter.post('/close-week', userExtractor, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'No autorizado' });
+
+    try {
+        const { startDate } = req.body; // Fecha de inicio de la semana enviada desde frontend
+        const start = new Date(startDate);
+        start.setHours(0,0,0,0);
+
+        const end = new Date(start);
+        end.setDate(start.getDate() + 5); // lunes a sábado
+        end.setHours(23,59,59,999);
+
+        const services = await Service.find({
+            fecha_inicio: { $gte: start, $lte: end },
+            status: 'finalizado'
+        }).populate('mechanic');
+
+        const payroll = {};
+
+        services.forEach(s => {
+            const id = s.mechanic._id;
+            if (!payroll[id]) payroll[id] = { name: s.mechanic.name, total: 0, count: 0 };
+            payroll[id].total += s.monto_a_pagar;
+            payroll[id].count++;
+        });
+
+        res.json({ start, end, payroll });
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al eliminar el servicio' });
+        res.status(500).json({ error: 'Error al cerrar semana' });
     }
 });
 
