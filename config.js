@@ -1,5 +1,5 @@
 const PAGE_URL = process.env.NODE_ENV === 'production'
-    ? 'https://todoapp-vspo.onrender.com/'
+    ? 'https://control-de-pagos-1.onrender.com'
     : 'http://localhost:3000';
     
     const MONGO_URI = process.env.NODE_ENV === 'production'
