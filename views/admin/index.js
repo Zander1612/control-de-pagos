@@ -1,13 +1,8 @@
-/*********************************
- * STATE
- *********************************/
 const state = {
     selectedDate: new Date()
 };
 
-/*********************************
- * INIT
- *********************************/
+
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (!token) return window.location.href = '/';
@@ -20,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
 });
 
-/*********************************
- * DATE UTILS
- *********************************/
 function getWeekRange(date) {
     const d = new Date(date);
     const day = d.getDay();
@@ -32,15 +24,13 @@ function getWeekRange(date) {
     start.setHours(0, 0, 0, 0);
 
     const end = new Date(start);
-    end.setDate(start.getDate() + 5); // Lunes a sábado
+    end.setDate(start.getDate() + 5); 
     end.setHours(23, 59, 59, 999);
 
     return { start, end };
 }
 
-/*********************************
- * DATA LOADING
- *********************************/
+
 async function loadAllData() {
     try {
         const [servicesRes, usersRes, typesRes] = await Promise.all([
@@ -95,9 +85,6 @@ function fillSelects(users, types) {
         types.map(t => `<option value="${t.id}">${t.name} (${t.percentage}%)</option>`).join('');
 }
 
-/*********************************
- * RENDER
- *********************************/
 function renderTrabajos(services) {
     const tbody = document.getElementById('table-body-content');
 
@@ -214,9 +201,6 @@ function renderConfig(types) {
     `).join('');
 }
 
-/*********************************
- * ACTIONS (GLOBAL)
- *********************************/
 window.switchTab = (tab) => {
     ['trabajos', 'mecanicos', 'nomina', 'config'].forEach(t => {
         document.getElementById(`section-${t}`).classList.add('hidden');
@@ -269,9 +253,6 @@ window.openCurrentWeek = () => {
 window.openModal = id => document.getElementById(id).classList.remove('hidden');
 window.closeModal = id => document.getElementById(id).classList.add('hidden');
 
-/*********************************
- * EVENTS
- *********************************/
 function setupEventListeners() {
     document.getElementById('week-filter').addEventListener('change', e => {
         state.selectedDate = new Date(e.target.value + 'T00:00:00');
@@ -314,8 +295,8 @@ function setupEventListeners() {
 
     document.getElementById('logout-btn').addEventListener('click', () => {
     if (confirm('¿Cerrar sesión?')) {
-        localStorage.removeItem('token'); // elimina el token
-        window.location.href = '/login/'; // redirige al login
+        localStorage.removeItem('token'); 
+        window.location.href = '/login/'; 
     }
 });
 }

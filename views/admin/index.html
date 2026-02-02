@@ -1,69 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Admin</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-    body { font-family: 'Inter', sans-serif; }
-    .tab-active { background: #1e293b; color: white; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { background: #1e293b; color: white; }
+    </style>
 </head>
+
 <body class="bg-gray-100 min-h-screen text-gray-200 pb-20">
 
-<!-- NAVBAR -->
-<nav class="bg-slate-900 p-4 sticky top-0 z-50 shadow-sm flex justify-between items-center">
-    <div class="flex items-center gap-2">
-        <h1 class="font-black text-sm uppercase italic tracking-tighter">Panel<span class="text-yellow-400">Admin</span></h1>
+<!-- ================= NAVBAR ================= -->
+<nav class="bg-slate-900 sticky top-0 z-50 shadow-sm p-3 md:p-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+        <h1 class="font-black text-sm uppercase italic tracking-tighter text-center md:text-left">
+            Panel <span class="text-yellow-400">Admin</span>
+        </h1>
+
+        <div class="flex flex-wrap justify-center gap-1 bg-slate-700 p-1 rounded-2xl">
+            <button onclick="switchTab('trabajos')" id="btn-trabajos"
+                class="px-4 py-2 text-[10px] font-black uppercase rounded-xl tab-active transition-all">
+                Trabajos
+            </button>
+            <button onclick="switchTab('mecanicos')" id="btn-mecanicos"
+                class="px-4 py-2 text-[10px] font-black uppercase rounded-xl text-gray-400 transition-all">
+                Equipo
+            </button>
+            <button onclick="switchTab('nomina')" id="btn-nomina"
+                class="px-4 py-2 text-[10px] font-black uppercase rounded-xl text-gray-400 transition-all">
+                Nómina
+            </button>
+            <button onclick="switchTab('config')" id="btn-config"
+                class="px-4 py-2 text-[10px] font-black uppercase rounded-xl text-gray-400 transition-all">
+                Config
+            </button>
+        </div>
+
+        <button id="logout-btn"
+            class="text-[10px] font-black text-red-500 uppercase text-center">
+            Cerrar sesión
+        </button>
+
     </div>
-    <div class="flex gap-1 bg-slate-700 p-1 rounded-2xl">
-        <button onclick="switchTab('trabajos')" id="btn-trabajos" class="px-4 py-2 text-[10px] font-black uppercase rounded-xl tab-active transition-all">Trabajos</button>
-        <button onclick="switchTab('mecanicos')" id="btn-mecanicos" class="px-4 py-2 text-[10px] font-black uppercase rounded-xl text-gray-400 transition-all">Equipo</button>
-        <button onclick="switchTab('nomina')" id="btn-nomina" class="px-4 py-2 text-[10px] font-black uppercase rounded-xl text-gray-400 transition-all">Nómina</button>
-        <button onclick="switchTab('config')" id="btn-config" class="px-4 py-2 text-[10px] font-black uppercase rounded-xl text-gray-400 transition-all">Config</button>
-    </div>
-    <button id="logout-btn" class="text-[10px] font-black text-red-500 uppercase px-3">Cerrar Sesión</button>
 </nav>
 
-<main class="max-w-6xl mx-auto p-4 space-y-6">
+<!-- ================= MAIN ================= -->
+<main class="max-w-6xl mx-auto px-3 md:px-6 py-4 space-y-6">
 
-    <!-- FILTRO SEMANAL -->
-    <div class="bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-lg">
-        <div class="flex items-center gap-4">
-            <p class="text-[10px] font-black uppercase tracking-wider">Periodo de Trabajo:</p>
-            <h2 id="current-week-label" class="text-base font-black uppercase italic">Cargando...</h2>
+    <!-- ===== FILTRO SEMANAL ===== -->
+    <div class="bg-slate-900 text-white p-4 rounded-2xl flex flex-col md:flex-row gap-4 justify-between shadow-lg">
+        <div>
+            <p class="text-[10px] font-black uppercase tracking-wider">Periodo de Trabajo</p>
+            <h2 id="current-week-label" class="text-base font-black uppercase italic">
+                Cargando...
+            </h2>
         </div>
-        <div class="flex gap-2">
-            <input type="date" id="week-filter" class="bg-slate-700 text-white p-2 rounded-xl">
-            <button onclick="openCurrentWeek()" class="bg-yellow-400 text-slate-900 px-4 py-2 rounded-xl font-black uppercase hover:scale-105 transition-all">Hoy</button>
-            <button onclick="startWeek()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-black uppercase hover:scale-105 transition-all">Iniciar Semana</button>
-            <button onclick="closeWeek()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-black uppercase hover:scale-105 transition-all">Cerrar Semana</button>
+
+        <div class="flex gap-2 flex-wrap">
+            <input type="date" id="week-filter"
+                class="bg-slate-700 text-white p-2 rounded-xl">
+            <button onclick="openCurrentWeek()"
+                class="bg-yellow-400 text-slate-900 px-4 py-2 rounded-xl font-black uppercase hover:scale-105 transition">
+                Hoy
+            </button>
         </div>
     </div>
 
-    <!-- ESTADÍSTICAS -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-900 text-white p-6 rounded-3xl shadow-lg">
-            <p class="text-[10px] font-black uppercase tracking-wider mb-1">Ingresos de la Semana</p>
+    <!-- ===== ESTADÍSTICAS ===== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-slate-900 p-6 rounded-3xl shadow-lg">
+            <p class="text-[10px] font-black uppercase tracking-wider text-gray-400">
+                Ingresos de la Semana
+            </p>
             <h3 id="total-revenue" class="text-3xl font-black font-mono">$0</h3>
         </div>
-        <div class="bg-slate-900 text-white p-6 rounded-3xl shadow-lg">
-            <p class="text-[10px] font-black uppercase tracking-wider mb-1">Nómina Pendiente</p>
+
+        <div class="bg-slate-900 p-6 rounded-3xl shadow-lg">
+            <p class="text-[10px] font-black uppercase tracking-wider text-gray-400">
+                Nómina Pendiente
+            </p>
             <h3 id="total-payroll" class="text-3xl font-black font-mono">$0</h3>
         </div>
     </div>
 
-    <!-- SECCIÓN TRABAJOS -->
+    <!-- ================= TRABAJOS ================= -->
     <section id="section-trabajos" class="space-y-4">
-        <div class="flex justify-between items-center">
-            <h2 class="text-[10px] font-black uppercase tracking-wider text-gray-400">Registro de Servicios</h2>
-            <button onclick="openModal('modal-crear')" class="bg-yellow-400 text-slate-900 px-6 py-2 rounded-2xl font-black text-[10px] uppercase shadow-lg hover:scale-105 transition-all">Nuevo Trabajo +</button>
+
+        <div class="flex flex-col sm:flex-row justify-between gap-3">
+            <h2 class="text-[10px] font-black uppercase tracking-wider text-gray-400">
+                Registro de Servicios
+            </h2>
+            <button onclick="openModal('modal-crear')"
+                class="bg-yellow-400 text-slate-900 px-6 py-2 rounded-2xl font-black text-[10px] uppercase hover:scale-105 transition">
+                Nuevo Trabajo +
+            </button>
         </div>
-        <div class="bg-slate-800 rounded-2xl overflow-hidden">
-            <table class="w-full text-left">
+
+        <div class="bg-slate-800 rounded-2xl overflow-x-auto">
+            <table class="min-w-[700px] w-full text-left">
                 <thead class="bg-slate-700">
                     <tr>
                         <th class="px-6 py-3 text-[10px] font-black uppercase">Fecha</th>
@@ -77,57 +120,96 @@
                 <tbody id="table-body-content" class="divide-y divide-slate-700"></tbody>
             </table>
         </div>
+
     </section>
 
-    <!-- SECCIÓN MECÁNICOS -->
+    <!-- ================= MECÁNICOS ================= -->
     <section id="section-mecanicos" class="hidden space-y-4">
-        <h2 class="text-[10px] font-black uppercase tracking-wider text-gray-400">Equipo de Mecánicos</h2>
-        <form id="employee-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <input id="emp-name" type="text" placeholder="Nombre" class="p-2 rounded-xl bg-slate-700 text-white">
-            <input id="emp-email" type="email" placeholder="Email" class="p-2 rounded-xl bg-slate-700 text-white">
-            <input id="emp-password" type="password" placeholder="Contraseña" class="p-2 rounded-xl bg-slate-700 text-white">
-            <button type="submit" class="bg-yellow-400 text-slate-900 px-4 py-2 rounded-2xl font-black uppercase col-span-1 md:col-span-1 hover:scale-105 transition-all">Crear</button>
+
+        <h2 class="text-[10px] font-black uppercase tracking-wider text-gray-400">
+            Equipo de Mecánicos
+        </h2>
+
+        <form id="employee-form"
+            class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <input id="emp-name" placeholder="Nombre"
+                class="p-2 rounded-xl bg-slate-700 text-white">
+            <input id="emp-email" placeholder="Email"
+                class="p-2 rounded-xl bg-slate-700 text-white">
+            <input id="emp-password" type="password" placeholder="Contraseña"
+                class="p-2 rounded-xl bg-slate-700 text-white">
+            <button
+                class="bg-yellow-400 text-slate-900 rounded-xl font-black uppercase">
+                Crear
+            </button>
         </form>
-        <div id="mecanicos-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+        <div id="mecanicos-list"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        </div>
+
     </section>
 
-    <!-- SECCIÓN NÓMINA -->
-    <section id="section-nomina" class="hidden space-y-4">
-        <div id="nomina-list" class="grid grid-cols-1 gap-4"></div>
+    <!-- ================= NÓMINA ================= -->
+    <section id="section-nomina" class="hidden">
+        <div id="nomina-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </section>
 
-    <!-- SECCIÓN CONFIG -->
+    <!-- ================= CONFIG ================= -->
     <section id="section-config" class="hidden space-y-4">
-        <form id="type-form" class="flex flex-col gap-2 mb-4">
-            <input id="new-type-name" type="text" placeholder="Tipo de Servicio" class="p-2 rounded-xl bg-slate-700 text-white">
-            <input id="new-type-percent" type="number" placeholder="Comisión (%)" class="p-2 rounded-xl bg-slate-700 text-white">
-            <button type="submit" class="bg-yellow-400 text-slate-900 px-4 py-2 rounded-2xl font-black uppercase hover:scale-105 transition-all">Guardar</button>
+
+        <form id="type-form" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input id="new-type-name" placeholder="Tipo de servicio"
+                class="p-2 rounded-xl bg-slate-700 text-white">
+            <input id="new-type-percent" type="number" placeholder="Comisión (%)"
+                class="p-2 rounded-xl bg-slate-700 text-white">
+            <button
+                class="bg-yellow-400 text-slate-900 rounded-xl font-black uppercase">
+                Guardar
+            </button>
         </form>
-        <div id="types-list" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+        <div id="types-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
     </section>
 
 </main>
 
-<!-- MODAL CREAR TRABAJO -->
-<div id="modal-crear" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 p-6 rounded-2xl w-full max-w-md shadow-lg text-white">
+<!-- ================= MODAL ================= -->
+<div id="modal-crear"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div
+        class="bg-slate-900 p-4 md:p-6 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto text-white">
+
         <h2 class="font-black text-lg mb-4">Registrar Servicio</h2>
-        <form id="service-form" class="flex flex-col gap-2">
-            <select id="mechanic-select" class="p-2 rounded-xl bg-slate-700 text-white" required></select>
-            <select id="type-select" class="p-2 rounded-xl bg-slate-700 text-white" required></select>
-            <input id="amount-input" type="number" placeholder="Costo total" class="p-2 rounded-xl bg-slate-700 text-white">
-            <textarea id="description-input" placeholder="Detalles (placa, modelo...)" class="p-2 rounded-xl bg-slate-700 text-white"></textarea>
-            <div class="flex gap-2 mt-2">
-                <button type="button" onclick="closeModal('modal-crear')" class="bg-gray-600 px-4 py-2 rounded-xl">Cancelar</button>
-                <button type="submit" class="bg-yellow-400 text-slate-900 px-4 py-2 rounded-xl font-black uppercase">Guardar</button>
+
+        <form id="service-form" class="space-y-2">
+            <select id="mechanic-select" class="p-2 rounded-xl bg-slate-700 text-white"></select>
+            <select id="type-select" class="p-2 rounded-xl bg-slate-700 text-white"></select>
+            <input id="amount-input" type="number" placeholder="Costo total"
+                class="p-2 rounded-xl bg-slate-700 text-white">
+            <textarea id="description-input" placeholder="Detalles"
+                class="p-2 rounded-xl bg-slate-700 text-white"></textarea>
+
+            <div class="flex gap-2 pt-2">
+                <button type="button" onclick="closeModal('modal-crear')"
+                    class="bg-gray-600 px-4 py-2 rounded-xl">
+                    Cancelar
+                </button>
+                <button
+                    class="bg-yellow-400 text-slate-900 px-4 py-2 rounded-xl font-black uppercase">
+                    Guardar
+                </button>
             </div>
         </form>
+
     </div>
 </div>
 
 <script src="index.js"></script>
 </body>
 </html>
+
 
 
 

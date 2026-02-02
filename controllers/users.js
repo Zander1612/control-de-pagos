@@ -6,12 +6,12 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');  
 const { userExtractor, isAdmin } = require('../middleware/auth');
 
-// --- 1. OBTENER LISTA (Corregido para el JS) ---
+
 usersRouter.get('/', userExtractor, isAdmin, async (req, res) => {
     try {
         const users = await User.find({});
         return res.json(users.map(user => ({
-            id: user._id.toString(), // Aseguramos que el JS vea "id"
+            id: user._id.toString(), 
             name: user.name,
             email: user.email,
             role: user.role || 'mecanico' 
@@ -22,7 +22,6 @@ usersRouter.get('/', userExtractor, isAdmin, async (req, res) => {
     }
 });
 
-// --- 2. REGISTRO (Tu lógica original intacta) ---
 usersRouter.post('/', async (request, response) => {
     const { name, email, password } = request.body;
 
@@ -38,7 +37,7 @@ usersRouter.post('/', async (request, response) => {
             return response.status(400).json({ error: 'El correo ya está en uso' });
         }
 
-        // --- Validación Externa de Email ---
+        // --- Validación de Email
         try {
             const verifyResponse = await axios.get(`https://apps.emaillistverify.com/api/verifyEmail`, {
                 params: {
@@ -68,7 +67,7 @@ usersRouter.post('/', async (request, response) => {
             email: normalizedEmail,
             passwordHash,
             verified: true,
-            role: 'mecanico' // <--- Asegúrate que esto esté aquí
+            role: 'mecanico' 
         });
 
         const savedUser = await newUser.save();
@@ -101,7 +100,7 @@ usersRouter.post('/', async (request, response) => {
     }
 });
 
-// ELIMINAR USUARIO 
+
 usersRouter.delete('/:id', userExtractor, isAdmin, async (req, res) => {
     try {
         const userToDelete = await User.findById(req.params.id);
@@ -110,13 +109,13 @@ usersRouter.delete('/:id', userExtractor, isAdmin, async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        // Opcional: Evitar que el admin se borre a sí mismo
+        
         if (userToDelete._id.toString() === req.user.id) {
             return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta de administrador' });
         }
 
         await User.findByIdAndDelete(req.params.id);
-        res.status(204).end(); // Éxito, sin contenido
+        res.status(204).end(); 
     } catch (error) {
         console.error("Error al eliminar usuario:", error);
         res.status(500).json({ error: 'Error interno al eliminar el mecánico' });

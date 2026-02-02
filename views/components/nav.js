@@ -66,14 +66,13 @@ const createNavTodos = () => {
         </div>`;
 };
 
-// Lógica de rutas
+
 const path = window.location.pathname;
 if (path === '/') createNavHome();
 else if (path.includes('/signup')) createNavSignup();
 else if (path.includes('/login')) createNavLogin();
 else if (path.includes('/admin') || path.includes('/users')) createNavTodos();
 
-// Lógica del menú móvil mejorada
 const navBtn = document.querySelector('#menu-icon');
 const menuMobile = document.querySelector('#menu-mobile');
 
@@ -90,11 +89,10 @@ if (navBtn && menuMobile) {
     });
 }
 
-// Lógica de Logout Robusta
 const handleLogout = async () => {
     try {
         localStorage.clear();
-        await axios.get('/api/logout').catch(() => {}); // Intenta avisar al server
+        await axios.get('/api/logout').catch(() => {}); 
         window.location.href = '/login/';
     } catch (error) {
         localStorage.clear();
@@ -102,7 +100,6 @@ const handleLogout = async () => {
     }
 };
 
-// Seleccionamos todos los botones de logout por clase (más seguro)
 document.querySelectorAll('.logout-btn').forEach(btn => {
     btn.addEventListener('click', handleLogout);
 });

@@ -103,9 +103,9 @@ servicesRouter.post('/start-week', userExtractor, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'No autorizado' });
 
     try {
-        // Guardar fecha de inicio en DB o simplemente devolver la fecha
+        
         const startOfWeek = new Date();
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // lunes
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
         startOfWeek.setHours(0,0,0,0);
 
         res.json({ message: 'Semana iniciada', startOfWeek });
@@ -119,12 +119,12 @@ servicesRouter.post('/close-week', userExtractor, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'No autorizado' });
 
     try {
-        const { startDate } = req.body; // Fecha de inicio de la semana enviada desde frontend
+        const { startDate } = req.body; 
         const start = new Date(startDate);
         start.setHours(0,0,0,0);
 
         const end = new Date(start);
-        end.setDate(start.getDate() + 5); // lunes a sábado
+        end.setDate(start.getDate() + 5); 
         end.setHours(23,59,59,999);
 
         const services = await Service.find({

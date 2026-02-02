@@ -19,15 +19,13 @@ const userExtractor = async (req, res, next) => {
     try {
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         
-        // Buscamos al usuario
-        const user = await User.findById(decodedToken.id);
         
-        // Si el token es válido pero el usuario ya no existe en la BD
+        const user = await User.findById(decodedToken.id);
         if (!user) {
             return res.status(401).json({ error: 'Usuario no encontrado' });
         }
 
-        req.user = user; // Guardamos el usuario completo en la request
+        req.user = user; 
         next();
     } catch (error) {
         console.error("Error validando token:", error.message);
@@ -37,7 +35,6 @@ const userExtractor = async (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-    // Gracias a la validación anterior, aquí ya estamos seguros de que req.user existe
     if (!req.user || req.user.role !== 'admin') {
         if (req.path.startsWith('/api')) {
             return res.status(403).json({ error: 'Acceso denegado: se requiere rol de administrador' });

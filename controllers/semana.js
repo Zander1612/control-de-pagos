@@ -5,7 +5,7 @@ const { userExtractor, isAdmin } = require('../middleware/auth');
 // OBTENER ESTADO DE LA SEMANA ACTUAL
 semanasRouter.get('/status', userExtractor, async (req, res) => {
     try {
-        // Usamos populate para que el frontend pueda ver los nombres de los mecánicos en el resumen
+        
         const openSemana = await Semana.findOne({ status: 'open' })
             .populate({
                 path: 'trabajos_incluidos',
@@ -24,10 +24,10 @@ semanasRouter.post('/open', userExtractor, isAdmin, async (req, res) => {
         if (yaExiste) return res.status(400).json({ error: 'Ya hay una semana abierta' });
 
         const newSemana = new Semana({
-            fecha_inicio_semana: new Date(), // Nombre de tu boceto
+            fecha_inicio_semana: new Date(), 
             status: 'open',
             totalGenerated: 0,
-            trabajos_incluidos: [] // Inicializamos el arreglo vacío
+            trabajos_incluidos: [] 
         });
 
         await newSemana.save();
@@ -44,7 +44,7 @@ semanasRouter.post('/close', userExtractor, isAdmin, async (req, res) => {
         if (!semana) return res.status(400).json({ error: 'No hay semana abierta para cerrar' });
 
         semana.status = 'closed';
-        semana.fecha_fin_semana = new Date(); // Nombre de tu boceto
+        semana.fecha_fin_semana = new Date(); 
         
         await semana.save();
         

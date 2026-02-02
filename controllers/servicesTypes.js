@@ -17,7 +17,6 @@ serviceTypesRouter.get('/', userExtractor, async (req, res) => {
     }
 });
 
-// 2. CREAR TIPO (Con validación de duplicados)
 serviceTypesRouter.post('/', userExtractor, isAdmin, async (req, res) => {
     const { name, percentage } = req.body;
 
@@ -27,7 +26,6 @@ serviceTypesRouter.post('/', userExtractor, isAdmin, async (req, res) => {
 
     const normalizedName = name.trim().toUpperCase();
 
-    // Evitamos servicios con el mismo nombre para no confundir al Admin
     const existingType = await ServiceType.findOne({ name: normalizedName });
     if (existingType) {
         return res.status(400).json({ error: 'Este tipo de servicio ya existe' });
@@ -46,7 +44,6 @@ serviceTypesRouter.post('/', userExtractor, isAdmin, async (req, res) => {
     }
 });
 
-// 3. ELIMINAR TIPO (Necesario para el botón '✕' de la pestaña Config)
 serviceTypesRouter.delete('/:id', userExtractor, isAdmin, async (req, res) => {
     try {
         await ServiceType.findByIdAndDelete(req.params.id);
