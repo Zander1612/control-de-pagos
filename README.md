@@ -1,187 +1,146 @@
-# TodoApp — README breve
+# Control de pagos — README breve
 
-Pequeña aplicación con registro de usuarios y verificación por correo.
+Sistema de Control de Pagos – Taller Mecánico
 
-Qué necesitas
-- Node.js
-- MongoDB (local o remoto)
+Aplicación web para la gestión de trabajos y pagos de mecánicos en un taller, diseñada para reemplazar el cálculo manual y desordenado de pagos semanales.
 
-Instalación rápida
-1. Instala dependencias:
+El sistema permite registrar trabajos, calcular ganancias automáticamente, cerrar semanas laborales y que cada mecánico pueda ver su resumen personal.
 
-```powershell
-npm install
-```
+🚀 Características principales
+👨‍🔧 Mecánicos
 
-2. Crea `.env` en la raíz con (mínimo):
+Ver sus trabajos realizados en la semana
 
-```
+Ver el total ganado automáticamente
+
+Interfaz responsive (móvil y desktop)
+
+Acceso con autenticación
+
+🧑‍💼 Administrador
+
+Registrar mecánicos
+
+Registrar tipos de servicio y porcentajes
+
+Registrar trabajos realizados
+
+Control semanal de pagos
+
+Cierre de semana automático
+
+🧱 Tecnologías usadas
+Backend
+
+Node.js
+
+Express
+
+MongoDB + Mongoose
+
+JWT (Autenticación)
+
+dotenv
+
+Frontend
+
+HTML
+
+Tailwind CSS
+
+JavaScript Vanilla
+
+Axios
+
+Deploy
+
+Render
+
+📂 Estructura del proyecto
+├── controllers/
+├── models/
+├── routes/
+├── middlewares/
+├── public/
+│   ├── admin.html
+│   ├── mecanico.html
+│   ├── index.js
+│   └── mecanico.js
+├── config/
+│   └── env.js
+├── index.js
+├── package.json
+└── README.md
+
+⚙️ Variables de entorno
+
+Crea un archivo .env con las siguientes variables:
+
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/todoapp
-ACCESS_TOKEN_SECRET=clave_secreta_larga
-EMAIL_USER=tu_email@example.com
-EMAIL_PASS=tu_contraseña_o_app_password
+MONGO_URI=mongodb://localhost:27017/taller
+MONGO_URI_PROD=TU_URI_DE_MONGODB_ATLAS
+JWT_SECRET=tu_clave_secreta
 NODE_ENV=dev
-```
 
-# TodoApp — README breve
+▶️ Scripts disponibles
+"scripts": {
+  "start": "cross-env NODE_ENV=production node index.js",
+  "dev": "cross-env NODE_ENV=dev nodemon index.js"
+}
 
-Pequeña app con registro de usuarios y verificación por correo.
-
-Requisitos
-- Node.js
-- MongoDB (local o remoto)
-
-Instalación rápida
-1. Instala dependencias:
-
-```powershell
-npm install
-```
-
-Nota: `npm install` instalará las dependencias listadas en `package.json` (dependencies y devDependencies). En este proyecto incluye, entre otras:
-
-- @tailwindcss/cli
-- bcrypt
-- cookie-parser
-- cors
-- dotenv
-- express
-- jsonwebtoken
-- mongoose
-- morgan
-- nodemailer
-- nodemon
-- path
-
-Configuración mínima
-Crear un archivo `.env` en la raíz. Este proyecto usa distintas variables según `NODE_ENV`:
-
-- Para desarrollo (conexión local a Mongo):
-
-```
-NODE_ENV=dev
-MONGO_URI_TEST=mongodb://localhost:27017/todoapp
-ACCESS_TOKEN_SECRET=clave_secreta_larga
-EMAIL_USER=tu_email@example.com
-# TodoApp — README breve
-
-Pequeña app con registro y verificación por correo.
-
-Essentials (resumido):
-
-- Instalar:
-
-```powershell
-npm install
-```
-
-- Variables mínimas (`.env` en raíz):
-
-```
-NODE_ENV=dev
-MONGO_URI_TEST=mongodb://localhost:27017/todoapp
-ACCESS_TOKEN_SECRET=clave_secreta_larga
-EMAIL_USER=tu_email@example.com
-EMAIL_PASS=tu_contraseña_o_app_password
-```
-
-- Ejecutar en dev:
-
-```powershell
+Desarrollo
 npm run dev
-```
 
-- Endpoints clave:
-  - POST /api/users  -> crear cuenta (envía correo de verificación)
-  - PATCH /api/users/:id/:token -> verificar cuenta
-  - POST /api/login -> login (devuelve cookie `accessToken`)
+Producción
+npm start
 
-- Prueba rápida (registro):
+🌐 Configuración para Render
 
-```bash
-curl -X POST http://localhost:3000/api/users -H "Content-Type: application/json" -d '{"name":"Juan","email":"juan@example.com","password":"miPass123"}'
-```
+El proyecto detecta automáticamente el entorno:
 
-- Nota TLS/correo: en dev el proyecto permite certificados autofirmados; en prod usa un SMTP confiable.
+const PAGE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://TU-APP.onrender.com'
+  : 'http://localhost:3000';
 
-Fin.
-Instalación rápida
-1. Instala dependencias:
-
-```powershell
-npm install
-```
-
-Nota: `npm install` instalará las dependencias listadas en `package.json` (dependencies y devDependencies). En este proyecto incluye, entre otras:
-
-- @tailwindcss/cli
-- bcrypt
-- cookie-parser
-- cors
-- dotenv
-- express
-- jsonwebtoken
-- mongoose
-- morgan
-- nodemailer
-- nodemon
-- path
-
-Configuración mínima
-Crear un archivo `.env` en la raíz. Este proyecto usa distintas variables según `NODE_ENV`:
-
-- Para desarrollo (conexión local a Mongo):
-
-```
-NODE_ENV=dev
-MONGO_URI_TEST=mongodb://localhost:27017/todoapp
-ACCESS_TOKEN_SECRET=clave_secreta_larga
-EMAIL_USER=tu_email@example.com
-EMAIL_PASS=tu_contraseña_o_app_password
-```
-# TodoApp — Resumen
-
-Instalación y uso (resumen):
-
-- Instalar dependencias:
-
-```powershell
-npm install
-```
-
-- Variables mínimas (`.env`):
-
-```
-NODE_ENV=dev
-MONGO_URI_TEST=mongodb://localhost:27017/todoapp
-ACCESS_TOKEN_SECRET=tu_clave_secreta
-EMAIL_USER=tu_email@example.com
-EMAIL_PASS=tu_contraseña_o_app_password
-```
-
-- Ejecutar en desarrollo:
-
-```powershell
-npm run dev
-```
-
-- Endpoints principales:
-  - POST /api/users → registrar (envía correo con enlace de verificación)
-  - PATCH /api/users/:id/:token → verificar cuenta
-  - POST /api/login → iniciar sesión (devuelve cookie `accessToken`)
-
-- Prueba rápida (registro):
-
-```bash
-curl -X POST http://localhost:3000/api/users -H "Content-Type: application/json" -d '{"name":"Juan","email":"juan@example.com","password":"miPass123"}'
-```
-
-- Nota rápida: en desarrollo se permiten certificados autofirmados para SMTP; en producción usa un SMTP confiable.
-
-Fin.
+const MONGO_URI = process.env.NODE_ENV === 'production'
+  ? process.env.MONGO_URI_PROD
+  : process.env.MONGO_URI;
 
 
-```bash
+En Render, solo debes:
 
-curl -X PATCH http://localhost:3000/api/users/<userId>/<token>
+Agregar las variables de entorno
+
+Usar npm start
+
+No necesitas compilar Tailwind (usa CDN)
+
+📱 Diseño Responsive
+
+Mobile First
+
+Optimizado para teléfonos y escritorio
+
+Estilos consistentes entre admin y mecánicos
+
+UI limpia y enfocada en datos
+
+🔐 Seguridad
+
+Autenticación con JWT
+
+Rutas protegidas por middleware
+
+Separación de roles (admin / mecánico)
+
+📌 Estado del proyecto
+
+🟢 Funcional
+🛠️ En mejora continua (reportes, historial, filtros)
+
+👤 Autor
+
+Zander Osuna
+Proyecto personal de práctica y portafolio
+Desarrollado con Node.js, MongoDB y Tailwind CSS
+
